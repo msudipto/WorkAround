@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <application
+
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.AndroidExample"
+        tools:targetApi="31">
+
+
+
+        <activity
+            android:name=".employeeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".loginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.androidexample.employerActivity"
+            android:exported="true"
+            />
+
+        <activity
+            android:name=".forgotpasswordActivity"
+            android:exported="true"
+            />
+        <activity
+            android:name=".forgotPasswordVerifiedActivity"
+            android:exported="true" />
+        <activity
+            android:name=".joinNowActivity"
+            android:exported="true" />
+        <activity
+            android:name=".resetPasswordActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".deleteActivity"
+            android:exported="true" />
+        <activity
+            android:name=".payCheckSearchActivity"
+            android:exported="true" />
+        <activity
+            android:name=".payCheckOverviewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".payCheckModifyActivity"
+            android:exported="true" />
+        <activity
+            android:name=".adminActivity"
+            android:exported="true" />
+        <activity
+            android:name=".assignProjectActivity"
+            android:exported="true" />
+        <activity
+            android:name=".employeeAttendanceActivity"
+            android:exported="true" />
+        <activity
+            android:name=".employeeStatusActivity"
+            android:exported="true" />
+        <activity
+            android:name=".messageActivity"
+            android:exported="true" />
+        <activity
+            android:name=".payActivity"
+            android:exported="true" />
+        <activity
+            android:name=".performanceReviewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".profileActivity"
+            android:exported="true" />
+        <activity
+            android:name=".projectActivity"
+            android:exported="true" />
+        <activity
+            android:name=".projectStatusActivity"
+            android:exported="true" />
+        <activity
+            android:name=".selfServiceActivity"
+            android:exported="true" />
+        <activity
+            android:name=".chatActivity"
+            android:exported="true" />
+        <activity
+            android:name=".createProject"
+            android:exported="true" />
+        <activity
+            android:name=".scheduleAdminActivity"
+            android:exported="true" />
+        <activity
+            android:name=".GiveReviewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".EmployeePerformanceReviewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".projectEmployerActivity"
+            android:exported="true" />
+        <activity
+            android:name=".createTasksActivity"
+            android:exported="true" />
+        <activity
+            android:name=".taskEmployeeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".scheduleEmployeeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".scheduleEmployerActivity"
+            android:exported="true" />
+        <activity
+            android:name=".createScheduleEmployerActivity"
+            android:exported="true" />
+        <activity
+            android:name=".createScheduleAdminActivity"
+            android:exported="true" />
+    </application>
+
+
+</manifest>

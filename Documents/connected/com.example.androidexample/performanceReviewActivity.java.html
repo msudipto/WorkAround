@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>performanceReviewActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">performanceReviewActivity.java</span></div><h1>performanceReviewActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+<span class="nc" id="L30">public class performanceReviewActivity extends AppCompatActivity {</span>
+
+    private Spinner employeeSpinner;
+    private ScrollView reviewLayout;
+    private String loggedInUsername;
+    private String employerName;
+<span class="nc" id="L36">    private ArrayList&lt;String&gt; employeeUsernames = new ArrayList&lt;&gt;();</span>
+
+    @SuppressLint(&quot;WrongViewCast&quot;)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L41">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L42">        setContentView(R.layout.activity_performance_review);</span>
+
+        // Set up the toolbar
+        @SuppressLint({&quot;MissingInflatedId&quot;, &quot;LocalSuppress&quot;})
+<span class="nc" id="L46">        Toolbar toolbar = findViewById(R.id.toolbarPReview);</span>
+<span class="nc" id="L47">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L48">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L49">        getSupportActionBar().setTitle(&quot;Performance Reviews&quot;);</span>
+
+        // Retrieve username and employer name from SharedPreferences
+<span class="nc" id="L52">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L53">        loggedInUsername = sharedPreferences.getString(&quot;username&quot;, null);</span>
+<span class="nc" id="L54">        employerName = sharedPreferences.getString(&quot;fullName&quot;, null);</span>
+
+        // Initialize views
+<span class="nc" id="L57">        employeeSpinner = findViewById(R.id.employeeSpinner);</span>
+<span class="nc" id="L58">        reviewLayout = findViewById(R.id.reviewLayout);</span>
+
+        // Load employee list
+<span class="nc" id="L61">        loadEmployees();</span>
+<span class="nc" id="L62">    }</span>
+
+    // Method to load employees from the API
+    private void loadEmployees() {
+        // URL to fetch the list of employees
+<span class="nc" id="L67">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/all&quot;;</span>
+
+        // Make a GET request to fetch the list of employees
+<span class="nc" id="L70">        JsonArrayRequest employeeRequest = new JsonArrayRequest(Request.Method.GET, url,</span>
+                null, // No body needed for GET request
+<span class="nc" id="L72">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            // Clear the previous list of employee usernames
+<span class="nc" id="L77">                            employeeUsernames.clear();</span>
+
+                            // Parse the response and add employee usernames to the list
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L81">                                JSONObject employee = response.getJSONObject(i);</span>
+<span class="nc" id="L82">                                String username = employee.getString(&quot;username&quot;);</span>
+<span class="nc" id="L83">                                employeeUsernames.add(username);</span>
+                            }
+
+                            // Populate the Spinner with employee usernames
+<span class="nc" id="L87">                            ArrayAdapter&lt;String&gt; adapter = new ArrayAdapter&lt;&gt;(performanceReviewActivity.this,</span>
+<span class="nc" id="L88">                                    android.R.layout.simple_spinner_item, employeeUsernames);</span>
+<span class="nc" id="L89">                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);</span>
+<span class="nc" id="L90">                            employeeSpinner.setAdapter(adapter);</span>
+<span class="nc" id="L91">                        } catch (JSONException e) {</span>
+<span class="nc" id="L92">                            Toast.makeText(performanceReviewActivity.this, &quot;Error parsing employee list.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L93">                            Log.e(&quot;Employee List Error&quot;, &quot;JSON parsing error&quot;, e);</span>
+<span class="nc" id="L94">                        }</span>
+<span class="nc" id="L95">                    }</span>
+                },
+<span class="nc" id="L97">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L100">                        Toast.makeText(performanceReviewActivity.this, &quot;Failed to fetch employee list.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L101">                        Log.e(&quot;Employee List Error&quot;, error.toString());</span>
+<span class="nc" id="L102">                    }</span>
+                });
+
+        // Add the request to the Volley request queue
+<span class="nc" id="L106">        Volley.newRequestQueue(performanceReviewActivity.this).add(employeeRequest);</span>
+<span class="nc" id="L107">    }</span>
+
+    // This method will display the reviews for the current employee
+    private void displayEmployeeReviews(String username) {
+        // API endpoint URL
+<span class="nc" id="L112">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/performance-reviews/all&quot;;</span>
+
+        // Create a GET request to fetch all reviews
+<span class="nc" id="L115">        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L116">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+<span class="nc" id="L120">                            boolean hasReviews = false;</span>
+
+                            // Loop through the response and filter reviews by username
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L124">                                JSONObject review = response.getJSONObject(i);</span>
+
+                                // Check if the review is for the logged-in user
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                                if (review.getString(&quot;username&quot;).equals(username)) {</span>
+<span class="nc" id="L128">                                    hasReviews = true;</span>
+
+                                    // Extract review details
+<span class="nc" id="L131">                                    String reviewer = review.getString(&quot;reviewer&quot;);</span>
+<span class="nc" id="L132">                                    String standards = review.getString(&quot;standards&quot;);</span>
+<span class="nc" id="L133">                                    String description = review.getString(&quot;description&quot;);</span>
+
+                                    // Add the review to the layout using CardView
+<span class="nc" id="L136">                                    addReviewCard(reviewer, standards, description);</span>
+                                }
+                            }
+
+                            // If no reviews are found, display a &quot;no reviews&quot; message
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                            if (!hasReviews) {</span>
+<span class="nc" id="L142">                                TextView noReviewsMessage = new TextView(performanceReviewActivity.this);</span>
+<span class="nc" id="L143">                                noReviewsMessage.setText(&quot;No performance reviews available at the moment.&quot;);</span>
+<span class="nc" id="L144">                                noReviewsMessage.setTextSize(16);</span>
+<span class="nc" id="L145">                                noReviewsMessage.setPadding(16, 8, 16, 8);</span>
+<span class="nc" id="L146">                                reviewLayout.addView(noReviewsMessage);</span>
+                            }
+
+
+<span class="nc" id="L150">                        } catch (JSONException e) {</span>
+<span class="nc" id="L151">                            Log.e(&quot;Error&quot;, &quot;Failed to parse reviews&quot;, e);</span>
+<span class="nc" id="L152">                        }</span>
+<span class="nc" id="L153">                    }</span>
+                },
+<span class="nc" id="L155">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L158">                        Toast.makeText(performanceReviewActivity.this, &quot;Failed to load reviews&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L159">                        Log.e(&quot;Error&quot;, &quot;API Error&quot;, error);</span>
+<span class="nc" id="L160">                    }</span>
+                });
+
+        // Add the request to the Volley queue
+<span class="nc" id="L164">        Volley.newRequestQueue(this).add(request);</span>
+<span class="nc" id="L165">    }</span>
+
+    // Helper method to add a review as a CardView
+    @SuppressLint(&quot;SetTextI18n&quot;)
+    private void addReviewCard(String reviewer, String standards, String description) {
+        // Create a CardView
+<span class="nc" id="L171">        androidx.cardview.widget.CardView cardView = new androidx.cardview.widget.CardView(this);</span>
+
+        // Set CardView layout parameters
+<span class="nc" id="L174">        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(</span>
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+<span class="nc" id="L178">        params.setMargins(16, 16, 16, 16); // Set margin</span>
+<span class="nc" id="L179">        cardView.setLayoutParams(params);</span>
+<span class="nc" id="L180">        cardView.setRadius(12);</span>
+<span class="nc" id="L181">        cardView.setCardElevation(6);</span>
+
+        // Create a LinearLayout for CardView content
+<span class="nc" id="L184">        LinearLayout cardContent = new LinearLayout(this);</span>
+<span class="nc" id="L185">        cardContent.setOrientation(LinearLayout.VERTICAL);</span>
+<span class="nc" id="L186">        cardContent.setPadding(16, 16, 16, 16);</span>
+
+        // Add TextViews for reviewer, standards, and description
+<span class="nc" id="L189">        TextView reviewerText = new TextView(this);</span>
+<span class="nc" id="L190">        reviewerText.setText(&quot;Reviewer: &quot; + reviewer);</span>
+<span class="nc" id="L191">        reviewerText.setTextSize(16);</span>
+<span class="nc" id="L192">        reviewerText.setPadding(0, 0, 0, 8);</span>
+
+<span class="nc" id="L194">        TextView standardsText = new TextView(this);</span>
+<span class="nc" id="L195">        standardsText.setText(&quot;Standards: &quot; + standards);</span>
+<span class="nc" id="L196">        standardsText.setTextSize(16);</span>
+<span class="nc" id="L197">        standardsText.setPadding(0, 0, 0, 8);</span>
+
+<span class="nc" id="L199">        TextView descriptionText = new TextView(this);</span>
+<span class="nc" id="L200">        descriptionText.setText(&quot;Description: &quot; + description);</span>
+<span class="nc" id="L201">        descriptionText.setTextSize(16);</span>
+<span class="nc" id="L202">        descriptionText.setPadding(0, 0, 0, 8);</span>
+
+        // Add TextViews to the card content
+<span class="nc" id="L205">        cardContent.addView(reviewerText);</span>
+<span class="nc" id="L206">        cardContent.addView(standardsText);</span>
+<span class="nc" id="L207">        cardContent.addView(descriptionText);</span>
+
+        // Add content to CardView
+<span class="nc" id="L210">        cardView.addView(cardContent);</span>
+
+        // Add CardView to the main layout
+<span class="nc" id="L213">        reviewLayout.addView(cardView);</span>
+<span class="nc" id="L214">    }</span>
+
+
+    // When on back button, check userType to make sure it goes back to the right page
+    private void checkUserType(final String username) {
+        // URL to fetch user profile using the username
+<span class="nc" id="L220">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/&quot; + username;</span>
+
+        // Make a GET request to fetch the user profile
+<span class="nc" id="L223">        JsonObjectRequest profileRequest = new JsonObjectRequest(Request.Method.GET, url,</span>
+                null, // No body needed for GET request
+<span class="nc" id="L225">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @SuppressLint(&quot;ShowToast&quot;)
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Extract user details from the response
+<span class="nc" id="L231">                            int userId = response.getInt(&quot;userId&quot;);</span>
+<span class="nc" id="L232">                            String fullName = response.getString(&quot;fullName&quot;);</span>
+<span class="nc" id="L233">                            String userType = response.getString(&quot;userType&quot;);</span>
+
+                            // Save these details in SharedPreferences
+<span class="nc" id="L236">                            SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L237">                            SharedPreferences.Editor editor = sharedPreferences.edit();</span>
+<span class="nc" id="L238">                            editor.putInt(&quot;userId&quot;, userId);</span>
+<span class="nc" id="L239">                            editor.putString(&quot;username&quot;, username);</span>
+<span class="nc" id="L240">                            editor.putString(&quot;userType&quot;, userType);</span>
+<span class="nc" id="L241">                            editor.putString(&quot;fullName&quot;, fullName);</span>
+<span class="nc" id="L242">                            editor.apply();</span>
+
+                            // Redirect to appropriate activity based on user type
+                            // (Handle redirect based on the userType logic here)
+<span class="nc" id="L246">                        } catch (JSONException e) {</span>
+<span class="nc" id="L247">                            Toast.makeText(performanceReviewActivity.this, &quot;Error parsing user profile.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L248">                            Log.e(&quot;Profile Error&quot;, &quot;JSON parsing error&quot;, e);</span>
+<span class="nc" id="L249">                        }</span>
+<span class="nc" id="L250">                    }</span>
+                },
+<span class="nc" id="L252">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L255">                        Toast.makeText(performanceReviewActivity.this, &quot;Failed to fetch user profile.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L256">                        Log.e(&quot;Profile Error&quot;, error.toString());</span>
+<span class="nc" id="L257">                    }</span>
+                });
+
+        // Add the profile request to the Volley request queue
+<span class="nc" id="L261">        Volley.newRequestQueue(performanceReviewActivity.this).add(profileRequest);</span>
+<span class="nc" id="L262">    }</span>
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+<span class="nc" id="L267">            checkUserType(loggedInUsername);</span>
+        }
+<span class="nc" id="L269">        return super.onOptionsItemSelected(item);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

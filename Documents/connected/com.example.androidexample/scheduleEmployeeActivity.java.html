@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>scheduleEmployeeActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">scheduleEmployeeActivity.java</span></div><h1>scheduleEmployeeActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * This page is for employees that can view all shifts assigned on a calendar and what tasks they have.
+ */
+<span class="nc" id="L37">public class scheduleEmployeeActivity extends AppCompatActivity {</span>
+
+    private CalendarView scheduleCalendar;
+    private TextView eventNameTextView;
+    private TextView eventTimeTextView;
+    private Map&lt;String, List&lt;String&gt;&gt; eventDetails;
+    private String loggedInUsername;
+
+    @SuppressLint(&quot;MissingInflatedId&quot;)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L48">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L49">        setContentView(R.layout.scheduleemployee);</span>
+
+<span class="nc" id="L51">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L52">        loggedInUsername = sharedPreferences.getString(&quot;username&quot;, null);</span>
+
+<span class="nc" id="L54">        Toolbar toolbar = findViewById(R.id.toolBarScheduleView);</span>
+<span class="nc" id="L55">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L56">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L57">        getSupportActionBar().setTitle(&quot;Schedule&quot;);</span>
+
+        // Initialize views for event details
+<span class="nc" id="L60">        eventNameTextView = findViewById(R.id.eventName);</span>
+<span class="nc" id="L61">        eventTimeTextView = findViewById(R.id.eventTime);</span>
+
+<span class="nc" id="L63">        scheduleCalendar = findViewById(R.id.scheduleCalendar);</span>
+
+        // Initialize the map for storing event details
+<span class="nc" id="L66">        eventDetails = new HashMap&lt;&gt;();</span>
+
+        // Fetch event data from the server
+<span class="nc" id="L69">        fetchEventData(loggedInUsername);</span>
+
+        // Set a listener for date changes
+<span class="nc" id="L72">        scheduleCalendar.setOnDateChangeListener((view, year, month, dayOfMonth) -&gt; {</span>
+            // Convert the selected date from CalendarView (milliseconds) to &quot;YYYY-MM-DD&quot; format
+<span class="nc" id="L74">            String selectedDate = formatDateToString(year, month, dayOfMonth);</span>
+
+            // Debugging log to check the selected date
+<span class="nc" id="L77">            Log.d(&quot;SelectedDate&quot;, &quot;Selected date: &quot; + selectedDate);</span>
+
+            // Check if the selected date has events
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (eventDetails.containsKey(selectedDate)) {</span>
+<span class="nc" id="L81">                List&lt;String&gt; events = eventDetails.get(selectedDate);</span>
+<span class="nc" id="L82">                StringBuilder eventMessage = new StringBuilder(&quot;Events on &quot; + selectedDate + &quot;:\n&quot;);</span>
+
+                // Append all event details for that date
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                for (String event : events) {</span>
+                    // Assuming event format &quot;EventType from StartTime to EndTime&quot;
+<span class="nc" id="L87">                    String[] eventParts = event.split(&quot; from &quot;);</span>
+<span class="nc" id="L88">                    String eventName = eventParts[0];  // Event name</span>
+<span class="nc" id="L89">                    String eventTime = eventParts[1];  // Time range (from start to end)</span>
+
+                    // Extract only the time part (HH:mm) from the start and end time
+<span class="nc" id="L92">                    String startTime = formatTime(eventTime.split(&quot; to &quot;)[0]); // Get start time (HH:mm)</span>
+<span class="nc" id="L93">                    String endTime = formatTime(eventTime.split(&quot; to &quot;)[1]);   // Get end time (HH:mm)</span>
+
+                    // Set event name and time (only time, not date) in the TextViews
+<span class="nc" id="L96">                    eventNameTextView.setText(&quot;Project Assigned: &quot; + eventName);</span>
+<span class="nc" id="L97">                    eventTimeTextView.setText(&quot;Hours: &quot; + startTime + &quot; to &quot; + endTime);</span>
+<span class="nc" id="L98">                }</span>
+<span class="nc" id="L99">            } else {</span>
+                // If no events are found for the selected date, show N/A
+<span class="nc" id="L101">                eventNameTextView.setText(&quot;Event Name: N/A&quot;);</span>
+<span class="nc" id="L102">                eventTimeTextView.setText(&quot;Event Time: N/A&quot;);</span>
+            }
+<span class="nc" id="L104">        });</span>
+<span class="nc" id="L105">    }</span>
+
+    // Method to fetch event data and process it
+    private void fetchEventData(String username) {
+        // Updated URL that directly fetches the logged-in user's schedules
+<span class="nc" id="L110">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/schedules/assigned/&quot; + username;</span>
+
+<span class="nc" id="L112">        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L113">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+<span class="nc bnc" id="L117" title="All 2 branches missed.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L118">                                JSONObject event = response.getJSONObject(i);</span>
+
+                                // Extract event details
+<span class="nc" id="L121">                                String startTime = event.getString(&quot;startTime&quot;);</span>
+<span class="nc" id="L122">                                String endTime = event.getString(&quot;endTime&quot;);</span>
+<span class="nc" id="L123">                                String eventType = event.getString(&quot;eventType&quot;);</span>
+<span class="nc" id="L124">                                String eventDate = startTime.split(&quot;T&quot;)[0];</span>
+<span class="nc" id="L125">                                String eventInfo = eventType + &quot; from &quot; + startTime + &quot; to &quot; + endTime;</span>
+
+                                // Store event details by date
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                                if (!eventDetails.containsKey(eventDate)) {</span>
+<span class="nc" id="L129">                                    eventDetails.put(eventDate, new ArrayList&lt;&gt;());</span>
+                                }
+<span class="nc" id="L131">                                eventDetails.get(eventDate).add(eventInfo);</span>
+                            }
+<span class="nc" id="L133">                        } catch (JSONException e) {</span>
+<span class="nc" id="L134">                            Log.e(&quot;Schedule&quot;, &quot;Error processing the event data.&quot;, e);</span>
+<span class="nc" id="L135">                        }</span>
+<span class="nc" id="L136">                    }</span>
+                },
+<span class="nc" id="L138">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L141">                        Log.e(&quot;Schedule&quot;, &quot;Error fetching data.&quot;, error);</span>
+<span class="nc" id="L142">                    }</span>
+                });
+
+<span class="nc" id="L145">        Volley.newRequestQueue(this).add(request);</span>
+<span class="nc" id="L146">    }</span>
+
+
+
+    // Utility method to convert the selected date to a &quot;YYYY-MM-DD&quot; format
+    private String formatDateToString(int year, int month, int dayOfMonth) {
+        // Month is 0-based, so add 1 to get the correct month number
+<span class="nc" id="L153">        month = month + 1;</span>
+
+        // Format the date as &quot;YYYY-MM-DD&quot;
+<span class="nc" id="L156">        return String.format(&quot;%04d-%02d-%02d&quot;, year, month, dayOfMonth);</span>
+    }
+
+    // Method to format the time part (HH:mm) from the full datetime string
+    // Method to format the time part (HH:mm a) from the full datetime string
+    private String formatTime(String datetime) {
+        try {
+            // Create a SimpleDateFormat object to parse the datetime
+<span class="nc" id="L164">            SimpleDateFormat inputFormat = new SimpleDateFormat(&quot;yyyy-MM-dd'T'HH:mm:ss&quot;);</span>
+            // Parse the datetime string
+<span class="nc" id="L166">            java.util.Date date = inputFormat.parse(datetime);</span>
+
+            // Now format the date object to extract time in 12-hour format with AM/PM (e.g., 03:15 PM)
+<span class="nc" id="L169">            SimpleDateFormat outputFormat = new SimpleDateFormat(&quot;h:mm a&quot;);</span>
+<span class="nc" id="L170">            return outputFormat.format(date);</span>
+<span class="nc" id="L171">        } catch (ParseException e) {</span>
+<span class="nc" id="L172">            e.printStackTrace();</span>
+<span class="nc" id="L173">            return &quot;&quot;;</span>
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+<span class="nc" id="L180">            Intent intent = new Intent(scheduleEmployeeActivity.this, employeeActivity.class);</span>
+<span class="nc" id="L181">            startActivity(intent);</span>
+<span class="nc" id="L182">            return true;</span>
+        }
+<span class="nc" id="L184">        return super.onOptionsItemSelected(item);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

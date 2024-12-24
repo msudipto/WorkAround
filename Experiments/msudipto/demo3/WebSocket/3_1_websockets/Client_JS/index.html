@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div id="wrapper">
+    <header>
+        <h1>WebSocket Chat Application</h1>
+        <p>Connect with others in real-time using WebSockets!</p>
+    </header>
+
+    <div id="chat-container">
+        <div id="connection-panel">
+            <label for="wsEndpoint">Select Endpoint:</label>
+            <select id="wsEndpoint">
+                <option value="ws://localhost:8080/chat/1/">Endpoint 1</option>
+                <option value="ws://localhost:8080/chat/2/">Endpoint 2</option>
+            </select>
+            <input type="text" id="username" placeholder="Enter your username" />
+            <button type="button" class="btn" onclick="connect();">Connect</button>
+        </div>
+
+        <div id="chat-panel">
+            <textarea id="log" readonly placeholder="Chat log will appear here..."></textarea>
+            <input type="text" id="msg" placeholder="Type your message here..." />
+            <button type="button" class="btn send-btn" onclick="send();">Send</button>
+            <div id="command-buttons">
+                <button type="button" class="btn command-btn" onclick="sendCommand('@list');">List Users</button>
+                <button type="button" class="btn command-btn" onclick="sendCommand('@exit');">Exit</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>WebSocket Chat &copy; 2024</p>
+    </footer>
+</div>
+
+<script src="websocket.js"></script>
+</body>
+
+</html>

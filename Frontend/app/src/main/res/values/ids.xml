@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="toolbar" type="id" />
+    <item name="individual_messages_divider" type="id" />
+    <item name="recyclerView_individual" type="id" />
+    <item name="group_messages_divider" type="id" />
+    <item name="recyclerView_group" type="id" />
+</resources>

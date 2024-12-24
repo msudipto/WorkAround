@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmployeePerformanceReviewActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">EmployeePerformanceReviewActivity.java</span></div><h1>EmployeePerformanceReviewActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+<span class="nc" id="L31">public class EmployeePerformanceReviewActivity extends AppCompatActivity {</span>
+
+    private TextView performanceReviewTitle;
+    private LinearLayout reviewLayout;
+    private Button addReviewButton;
+    private String loggedInUsername;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L40">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L41">        setContentView(R.layout.employee_perfomance_review);  // Load the XML layout</span>
+
+        // Initialize the UI components
+<span class="nc" id="L44">        reviewLayout = findViewById(R.id.reviewLayout);</span>
+<span class="nc" id="L45">        addReviewButton = findViewById(R.id.addReviewButton);</span>
+
+        // Setup Toolbar
+        @SuppressLint({&quot;MissingInflatedId&quot;, &quot;LocalSuppress&quot;})
+<span class="nc" id="L49">        Toolbar toolbar = findViewById(R.id.toolbarReviews);</span>
+<span class="nc" id="L50">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L51">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L52">        getSupportActionBar().setTitle(&quot;Performance Reviews&quot;);</span>
+
+        // Get the username from SharedPreferences
+<span class="nc" id="L55">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L56">        loggedInUsername = sharedPreferences.getString(&quot;username&quot;, null);</span>
+
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (loggedInUsername != null) {</span>
+<span class="nc" id="L59">            displayEmployeeReviews(loggedInUsername);</span>
+        }
+
+
+
+<span class="nc" id="L64">        addReviewButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L65">        });</span>
+<span class="nc" id="L66">    }</span>
+
+    // This method will display the reviews for the current employee
+    private void displayEmployeeReviews(String username) {
+        // API endpoint URL
+<span class="nc" id="L71">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/performance-reviews/all&quot;;</span>
+
+        // Create a GET request to fetch all reviews
+<span class="nc" id="L74">        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L75">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+<span class="nc" id="L79">                            boolean hasReviews = false;</span>
+
+                            // Loop through the response and filter reviews by username
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L83">                                JSONObject review = response.getJSONObject(i);</span>
+
+                                // Check if the review is for the logged-in user
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                                if (review.getString(&quot;username&quot;).equals(username)) {</span>
+<span class="nc" id="L87">                                    hasReviews = true;</span>
+
+                                    // Extract review details
+<span class="nc" id="L90">                                    String reviewer = review.getString(&quot;reviewer&quot;);</span>
+<span class="nc" id="L91">                                    String standards = review.getString(&quot;standards&quot;);</span>
+<span class="nc" id="L92">                                    String description = review.getString(&quot;description&quot;);</span>
+
+                                    // Add the review to the layout using CardView
+<span class="nc" id="L95">                                    addReviewCard(reviewer, standards, description);</span>
+                                }
+                            }
+
+                            // If no reviews are found, display a &quot;no reviews&quot; message
+<span class="nc bnc" id="L100" title="All 2 branches missed.">                            if (!hasReviews) {</span>
+<span class="nc" id="L101">                                TextView noReviewsMessage = new TextView(EmployeePerformanceReviewActivity.this);</span>
+<span class="nc" id="L102">                                noReviewsMessage.setText(&quot;No performance reviews available at the moment.&quot;);</span>
+<span class="nc" id="L103">                                noReviewsMessage.setTextSize(16);</span>
+<span class="nc" id="L104">                                noReviewsMessage.setPadding(16, 8, 16, 8);</span>
+<span class="nc" id="L105">                                reviewLayout.addView(noReviewsMessage);</span>
+                            }
+
+
+<span class="nc" id="L109">                        } catch (JSONException e) {</span>
+<span class="nc" id="L110">                            Log.e(&quot;Error&quot;, &quot;Failed to parse reviews&quot;, e);</span>
+<span class="nc" id="L111">                        }</span>
+<span class="nc" id="L112">                    }</span>
+                },
+<span class="nc" id="L114">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L117">                        Toast.makeText(EmployeePerformanceReviewActivity.this, &quot;Failed to load reviews&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L118">                        Log.e(&quot;Error&quot;, &quot;API Error&quot;, error);</span>
+<span class="nc" id="L119">                    }</span>
+                });
+
+        // Add the request to the Volley queue
+<span class="nc" id="L123">        Volley.newRequestQueue(this).add(request);</span>
+<span class="nc" id="L124">    }</span>
+
+    // Helper method to add a review as a CardView
+    @SuppressLint(&quot;SetTextI18n&quot;)
+    private void addReviewCard(String reviewer, String standards, String description) {
+        // Create a CardView
+<span class="nc" id="L130">        androidx.cardview.widget.CardView cardView = new androidx.cardview.widget.CardView(this);</span>
+
+        // Set CardView layout parameters
+<span class="nc" id="L133">        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(</span>
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+<span class="nc" id="L137">        params.setMargins(16, 16, 16, 16); // Set margin</span>
+<span class="nc" id="L138">        cardView.setLayoutParams(params);</span>
+<span class="nc" id="L139">        cardView.setRadius(12);</span>
+<span class="nc" id="L140">        cardView.setCardElevation(6);</span>
+
+        // Create a LinearLayout for CardView content
+<span class="nc" id="L143">        LinearLayout cardContent = new LinearLayout(this);</span>
+<span class="nc" id="L144">        cardContent.setOrientation(LinearLayout.VERTICAL);</span>
+<span class="nc" id="L145">        cardContent.setPadding(16, 16, 16, 16);</span>
+
+        // Add TextViews for reviewer, standards, and description
+<span class="nc" id="L148">        TextView reviewerText = new TextView(this);</span>
+<span class="nc" id="L149">        reviewerText.setText(&quot;Reviewer: &quot; + reviewer);</span>
+<span class="nc" id="L150">        reviewerText.setTextSize(16);</span>
+<span class="nc" id="L151">        reviewerText.setPadding(0, 0, 0, 8);</span>
+
+<span class="nc" id="L153">        TextView standardsText = new TextView(this);</span>
+<span class="nc" id="L154">        standardsText.setText(&quot;Standards: &quot; + standards);</span>
+<span class="nc" id="L155">        standardsText.setTextSize(16);</span>
+<span class="nc" id="L156">        standardsText.setPadding(0, 0, 0, 8);</span>
+
+<span class="nc" id="L158">        TextView descriptionText = new TextView(this);</span>
+<span class="nc" id="L159">        descriptionText.setText(&quot;Description: &quot; + description);</span>
+<span class="nc" id="L160">        descriptionText.setTextSize(16);</span>
+<span class="nc" id="L161">        descriptionText.setPadding(0, 0, 0, 8);</span>
+
+        // Add TextViews to the card content
+<span class="nc" id="L164">        cardContent.addView(reviewerText);</span>
+<span class="nc" id="L165">        cardContent.addView(standardsText);</span>
+<span class="nc" id="L166">        cardContent.addView(descriptionText);</span>
+
+        // Add content to CardView
+<span class="nc" id="L169">        cardView.addView(cardContent);</span>
+
+        // Add CardView to the main layout
+<span class="nc" id="L172">        reviewLayout.addView(cardView);</span>
+<span class="nc" id="L173">    }</span>
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+<span class="nc" id="L178">            fetchUserProfile(loggedInUsername);</span>
+<span class="nc" id="L179">            return true;</span>
+        }
+<span class="nc" id="L181">        return super.onOptionsItemSelected(item);</span>
+    }
+
+    private void fetchUserProfile(String username) {
+<span class="nc" id="L185">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/&quot; + username;</span>
+
+<span class="nc" id="L187">        JsonObjectRequest profileRequest = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                url,
+                null,
+                response -&gt; {
+                    try {
+<span class="nc" id="L193">                        int userId = response.getInt(&quot;userId&quot;);</span>
+<span class="nc" id="L194">                        String fullName = response.getString(&quot;fullName&quot;);</span>
+<span class="nc" id="L195">                        String userType = response.getString(&quot;userType&quot;);</span>
+
+<span class="nc" id="L197">                        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L198">                        SharedPreferences.Editor editor = sharedPreferences.edit();</span>
+<span class="nc" id="L199">                        editor.putInt(&quot;userId&quot;, userId);</span>
+<span class="nc" id="L200">                        editor.putString(&quot;username&quot;, username);</span>
+<span class="nc" id="L201">                        editor.putString(&quot;userType&quot;, userType);</span>
+<span class="nc" id="L202">                        editor.putString(&quot;fullName&quot;, fullName);</span>
+<span class="nc" id="L203">                        editor.apply();</span>
+
+                        Intent intent;
+<span class="nc bnc" id="L206" title="All 4 branches missed.">                        switch (userType) {</span>
+                            case &quot;ADMIN&quot;:
+<span class="nc" id="L208">                                intent = new Intent(EmployeePerformanceReviewActivity.this, adminActivity.class);</span>
+<span class="nc" id="L209">                                break;</span>
+                            case &quot;EMPLOYER&quot;:
+<span class="nc" id="L211">                                intent = new Intent(EmployeePerformanceReviewActivity.this, employerActivity.class);</span>
+<span class="nc" id="L212">                                break;</span>
+                            case &quot;EMPLOYEE&quot;:
+<span class="nc" id="L214">                                intent = new Intent(EmployeePerformanceReviewActivity.this, employeeActivity.class);</span>
+<span class="nc" id="L215">                                break;</span>
+                            default:
+<span class="nc" id="L217">                                Toast.makeText(this, &quot;Unknown user type&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L218">                                return;</span>
+                        }
+<span class="nc" id="L220">                        startActivity(intent);</span>
+
+<span class="nc" id="L222">                    } catch (JSONException e) {</span>
+<span class="nc" id="L223">                        Toast.makeText(this, &quot;Error parsing user profile.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L224">                        Log.e(&quot;Profile Error&quot;, &quot;JSON parsing error&quot;, e);</span>
+<span class="nc" id="L225">                    }</span>
+<span class="nc" id="L226">                },</span>
+                error -&gt; {
+<span class="nc" id="L228">                    Toast.makeText(this, &quot;Failed to fetch user profile.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L229">                    Log.e(&quot;Profile Error&quot;, error.toString());</span>
+<span class="nc" id="L230">                });</span>
+
+<span class="nc" id="L232">        Volley.newRequestQueue(this).add(profileRequest);</span>
+<span class="nc" id="L233">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>adminActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">adminActivity.java</span></div><h1>adminActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.FrameLayout;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+<span class="fc" id="L44">public class adminActivity extends AppCompatActivity {</span>
+<span class="fc" id="L45">    private boolean isClockedIn = false;</span>
+
+    private long clockInTime;
+<span class="fc" id="L48">    private SimpleDateFormat dateFormat = new SimpleDateFormat(&quot;hh:mm a&quot;, Locale.getDefault());</span>
+
+    private FrameLayout borderChange;
+
+    private Button checkButton;
+    private Button projectStatButton;
+    private Button assignProjButton;
+    private Button employeeAttendanceButton;
+    private Button employeeStatButton;
+    private Button messageButton;
+    private Button performanceReviewButton;
+    private Button profileButton;
+    private Button projButton;
+    private Button selfServiceButton;
+    private Button payButton;
+    private TextView checkInMsg;
+    private Chronometer timeClockMsg;
+    private TextView payHome;
+    private TextView hoursHome;
+    private TextView payDayHome;
+    private String loggedInUsername;
+    private TextView shiftDateNextHome;
+    private TextView shiftHoursNextHome;
+    private TextView shiftProjectNextHome;
+
+    private SearchView searchView;
+    private Button searchButton;
+    private TextView resultTextView;
+
+    private List&lt;String&gt; sampleData;
+
+
+    @SuppressLint(&quot;WrongViewCast&quot;)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L83">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L84">        setContentView(R.layout.admin);</span>
+
+        // Retrieve username from SharedPreferences
+<span class="fc" id="L87">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="fc" id="L88">        loggedInUsername = sharedPreferences.getString(&quot;username&quot;, null);</span>
+
+        // Fetch user data using the logged-in username
+<span class="fc" id="L91">        fetchPayData(loggedInUsername);</span>
+<span class="fc" id="L92">        fetchScheduleData(loggedInUsername);</span>
+<span class="fc" id="L93">        fetchUsersName(loggedInUsername);</span>
+
+<span class="fc" id="L95">        borderChange = findViewById(R.id.frameChange);</span>
+<span class="fc" id="L96">        checkButton = findViewById(R.id.checkButton);</span>
+<span class="fc" id="L97">        checkInMsg = findViewById(R.id.checkText);</span>
+<span class="fc" id="L98">        timeClockMsg = findViewById(R.id.timeText);</span>
+<span class="fc" id="L99">        projectStatButton = findViewById(R.id.projStatusButton);</span>
+<span class="fc" id="L100">        assignProjButton = findViewById(R.id.assignProjButton);</span>
+<span class="fc" id="L101">        employeeAttendanceButton = findViewById(R.id.employeeAttendanceButton);</span>
+<span class="fc" id="L102">        employeeStatButton = findViewById(R.id.employeeStatusbutton);</span>
+<span class="fc" id="L103">        messageButton = findViewById(R.id.messageButton);</span>
+<span class="fc" id="L104">        performanceReviewButton = findViewById(R.id.performanceButton);</span>
+<span class="fc" id="L105">        profileButton = findViewById(R.id.profileButton);</span>
+<span class="fc" id="L106">        projButton = findViewById(R.id.projButton);</span>
+<span class="fc" id="L107">        selfServiceButton = findViewById(R.id.selfServiceButton);</span>
+<span class="fc" id="L108">        payButton = findViewById(R.id.payButton);</span>
+<span class="fc" id="L109">        searchView = findViewById(R.id.searchView);</span>
+<span class="fc" id="L110">        searchButton = findViewById(R.id.searchButton);</span>
+<span class="fc" id="L111">        resultTextView = findViewById(R.id.resultTextView);</span>
+<span class="fc" id="L112">        payHome = findViewById(R.id.payText);</span>
+<span class="fc" id="L113">        hoursHome = findViewById(R.id.hoursWorkedText);</span>
+<span class="fc" id="L114">        payDayHome = findViewById(R.id.payDateText);</span>
+<span class="fc" id="L115">        shiftDateNextHome = findViewById(R.id.nextShiftText);</span>
+<span class="fc" id="L116">        shiftHoursNextHome = findViewById(R.id.shiftHoursText);</span>
+<span class="fc" id="L117">        shiftProjectNextHome = findViewById(R.id.assignedProjText);</span>
+
+
+<span class="fc" id="L120">        initializeSampleData();</span>
+
+        // Restore clock-in state and time from SharedPreferences
+<span class="fc" id="L123">        isClockedIn = sharedPreferences.getBoolean(&quot;isClockedIn&quot;, false);</span>
+<span class="fc" id="L124">        clockInTime = sharedPreferences.getLong(&quot;clockInTime&quot;, 0);</span>
+
+<span class="fc" id="L126">        LayerDrawable layerDrawable = (LayerDrawable) borderChange.getBackground();</span>
+<span class="fc" id="L127">        Drawable borderDrawable = layerDrawable.getDrawable(0);</span>
+
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if (borderDrawable instanceof GradientDrawable) {</span>
+<span class="fc" id="L130">            GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;</span>
+
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">            if (isClockedIn) {</span>
+<span class="nc" id="L133">                gradientDrawable.setStroke(15, Color.GREEN);</span>
+<span class="nc" id="L134">                checkInMsg.setText(&quot;Clock Out&quot;);</span>
+
+                // Resume the chronometer based on the saved clock-in time
+<span class="nc" id="L137">                timeClockMsg.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - clockInTime));</span>
+<span class="nc" id="L138">                timeClockMsg.start();</span>
+            } else {
+<span class="fc" id="L140">                gradientDrawable.setStroke(15, Color.GRAY);</span>
+<span class="fc" id="L141">                checkInMsg.setText(&quot;Clock In&quot;);</span>
+<span class="fc" id="L142">                timeClockMsg.stop();</span>
+<span class="fc" id="L143">                timeClockMsg.setBase(SystemClock.elapsedRealtime());</span>
+            }
+        }
+
+        // Clock In/Out button listener
+<span class="fc" id="L148">        checkButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                if (borderDrawable instanceof GradientDrawable) {</span>
+<span class="fc" id="L152">                    GradientDrawable gradientDrawable = (GradientDrawable) borderDrawable;</span>
+
+<span class="fc bfc" id="L154" title="All 2 branches covered.">                    if (isClockedIn) {</span>
+<span class="fc" id="L155">                        gradientDrawable.setStroke(15, Color.GRAY);</span>
+<span class="fc" id="L156">                        checkInMsg.setText(&quot;Clock In&quot;);</span>
+
+<span class="fc" id="L158">                        timeClockMsg.stop();</span>
+<span class="fc" id="L159">                        timeClockMsg.setBase(SystemClock.elapsedRealtime());</span>
+
+<span class="fc" id="L161">                        String clockOutTime = dateFormat.format(new Date());</span>
+<span class="fc" id="L162">                        showClockOutPopup(clockInTime, System.currentTimeMillis() - clockInTime, clockOutTime);</span>
+<span class="fc" id="L163">                    } else {</span>
+<span class="fc" id="L164">                        gradientDrawable.setStroke(15, Color.GREEN);</span>
+<span class="fc" id="L165">                        checkInMsg.setText(&quot;Clock Out&quot;);</span>
+
+<span class="fc" id="L167">                        timeClockMsg.setBase(SystemClock.elapsedRealtime());</span>
+<span class="fc" id="L168">                        timeClockMsg.start();</span>
+
+<span class="fc" id="L170">                        clockInTime = System.currentTimeMillis();</span>
+                    }
+
+<span class="fc bfc" id="L173" title="All 2 branches covered.">                    isClockedIn = !isClockedIn;</span>
+                }
+<span class="fc" id="L175">            }</span>
+        });
+
+        // Search button listener
+<span class="fc" id="L179">        searchButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L182">                performSearch();</span>
+<span class="nc" id="L183">            }</span>
+        });
+
+        //All Intents for buttons to new pages down below
+<span class="fc" id="L187">        projectStatButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L190">                Intent intent = new Intent(adminActivity.this, projectStatusActivity.class);</span>
+<span class="nc" id="L191">                startActivity(intent);</span>
+<span class="nc" id="L192">            }</span>
+        });
+<span class="fc" id="L194">        assignProjButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L197">                Intent intent = new Intent(adminActivity.this, createProject.class);</span>
+<span class="nc" id="L198">                startActivity(intent);</span>
+<span class="nc" id="L199">            }</span>
+        });
+<span class="fc" id="L201">        employeeAttendanceButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L204">                Intent intent = new Intent(adminActivity.this, employeeAttendanceActivity.class);</span>
+<span class="nc" id="L205">                startActivity(intent);</span>
+<span class="nc" id="L206">            }</span>
+        });
+<span class="fc" id="L208">        employeeStatButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L211">                Intent intent = new Intent(adminActivity.this, employeeStatusActivity.class);</span>
+<span class="nc" id="L212">                startActivity(intent);</span>
+<span class="nc" id="L213">            }</span>
+        });
+<span class="fc" id="L215">        messageButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L218">                Intent intent = new Intent(adminActivity.this, messageActivity.class);</span>
+<span class="nc" id="L219">                startActivity(intent);</span>
+<span class="nc" id="L220">            }</span>
+        });
+<span class="fc" id="L222">        performanceReviewButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L225">                Intent intent = new Intent(adminActivity.this, GiveReviewActivity.class);</span>
+<span class="nc" id="L226">                startActivity(intent);</span>
+<span class="nc" id="L227">            }</span>
+        });
+<span class="fc" id="L229">        profileButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L232">                Intent intent = new Intent(adminActivity.this, profileActivity.class);</span>
+<span class="nc" id="L233">                startActivity(intent);</span>
+<span class="nc" id="L234">            }</span>
+        });
+<span class="fc" id="L236">        projButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L239">                Intent intent = new Intent(adminActivity.this, projectActivity.class);</span>
+<span class="nc" id="L240">                startActivity(intent);</span>
+<span class="nc" id="L241">            }</span>
+        });
+<span class="fc" id="L243">        selfServiceButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L246">                Intent intent = new Intent(adminActivity.this, scheduleAdminActivity.class);</span>
+<span class="nc" id="L247">                startActivity(intent);</span>
+<span class="nc" id="L248">            }</span>
+        });
+<span class="fc" id="L250">        payButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L253">                Intent intent = new Intent(adminActivity.this, payCheckOverviewActivity.class);</span>
+<span class="nc" id="L254">                startActivity(intent);</span>
+<span class="nc" id="L255">            }</span>
+        });
+
+
+<span class="fc" id="L259">    }</span>
+
+    @Override
+    protected void onPause() {
+<span class="fc" id="L263">        super.onPause();</span>
+
+        // Save the clock-in state and time to SharedPreferences
+<span class="fc" id="L266">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="fc" id="L267">        SharedPreferences.Editor editor = sharedPreferences.edit();</span>
+<span class="fc" id="L268">        editor.putBoolean(&quot;isClockedIn&quot;, isClockedIn);</span>
+<span class="fc" id="L269">        editor.putLong(&quot;clockInTime&quot;, clockInTime);</span>
+<span class="fc" id="L270">        editor.apply();</span>
+<span class="fc" id="L271">    }</span>
+
+    private void initializeSampleData() {
+<span class="fc" id="L274">        sampleData = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L275">        sampleData.add(&quot;Project A&quot;);</span>
+<span class="fc" id="L276">        sampleData.add(&quot;Project B&quot;);</span>
+<span class="fc" id="L277">        sampleData.add(&quot;Employee 1&quot;);</span>
+<span class="fc" id="L278">        sampleData.add(&quot;Employee 2&quot;);</span>
+<span class="fc" id="L279">        sampleData.add(&quot;Attendance Report&quot;);</span>
+<span class="fc" id="L280">        sampleData.add(&quot;Performance Review&quot;);</span>
+<span class="fc" id="L281">    }</span>
+
+    private void performSearch() {
+<span class="nc" id="L284">        String query = searchView.getQuery().toString().toLowerCase();</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        if (!query.isEmpty()) {</span>
+<span class="nc" id="L286">            StringBuilder results = new StringBuilder(&quot;Search Results:\n&quot;);</span>
+<span class="nc" id="L287">            boolean found = false;</span>
+
+<span class="nc bnc" id="L289" title="All 2 branches missed.">            for (String item : sampleData) {</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">                if (item.toLowerCase().contains(query)) {</span>
+<span class="nc" id="L291">                    results.append(item).append(&quot;\n&quot;);</span>
+<span class="nc" id="L292">                    found = true;</span>
+                }
+<span class="nc" id="L294">            }</span>
+
+<span class="nc bnc" id="L296" title="All 2 branches missed.">            if (found) {</span>
+<span class="nc" id="L297">                resultTextView.setText(results.toString());</span>
+<span class="nc" id="L298">                resultTextView.setVisibility(View.VISIBLE);</span>
+            } else {
+<span class="nc" id="L300">                resultTextView.setText(&quot;No results found for: &quot; + query);</span>
+<span class="nc" id="L301">                resultTextView.setVisibility(View.VISIBLE);</span>
+            }
+<span class="nc" id="L303">        } else {</span>
+<span class="nc" id="L304">            resultTextView.setText(&quot;Please enter a search term.&quot;);</span>
+<span class="nc" id="L305">            resultTextView.setVisibility(View.VISIBLE);</span>
+        }
+<span class="nc" id="L307">    }</span>
+
+    private void showClockOutPopup(long clockInTime, long elapsedMillis, String clockOutTime) {
+<span class="fc" id="L310">        long elapsedHours = elapsedMillis / 3600000;</span>
+<span class="fc" id="L311">        long elapsedMinutes = (elapsedMillis % 3600000) / 60000;</span>
+
+<span class="fc" id="L313">        String clockInTimeFormatted = dateFormat.format(new Date(clockInTime));</span>
+<span class="fc" id="L314">        String workedHours = String.format(Locale.getDefault(), &quot;%02d:%02d&quot;, elapsedHours, elapsedMinutes);</span>
+
+<span class="fc" id="L316">        AlertDialog.Builder builder = new AlertDialog.Builder(this);</span>
+<span class="fc" id="L317">        builder.setTitle(&quot;Clock Out Summary&quot;);</span>
+<span class="fc" id="L318">        builder.setMessage(&quot;Clock In Time: &quot; + clockInTimeFormatted +</span>
+                &quot;\nClock Out Time: &quot; + clockOutTime +
+                &quot;\nHours Worked: &quot; + workedHours);
+<span class="fc" id="L321">        builder.setPositiveButton(&quot;OK&quot;, (dialog, which) -&gt; dialog.dismiss());</span>
+<span class="fc" id="L322">        builder.show();</span>
+<span class="fc" id="L323">    }</span>
+
+    //Method to fetch all of users data thats logged in and then post name to welcome message
+    private void fetchUsersName(String username) {
+<span class="pc bpc" id="L327" title="2 of 4 branches missed.">        if (username == null || username.isEmpty()) {</span>
+<span class="nc" id="L328">            Toast.makeText(this, &quot;Username not found&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L329">            return;</span>
+        }
+
+<span class="fc" id="L332">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/&quot; + username;</span>
+
+<span class="fc" id="L334">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,</span>
+<span class="fc" id="L335">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Extract the &quot;fullName&quot; field from the response
+<span class="fc" id="L340">                            String fullName = response.getString(&quot;fullName&quot;);</span>
+
+                            // Update the welcome message
+<span class="fc" id="L343">                            TextView welcomeMessage = findViewById(R.id.welcomeMessage);</span>
+<span class="fc" id="L344">                            welcomeMessage.setText(&quot;Welcome, &quot; + fullName + &quot;!&quot;);</span>
+
+<span class="nc" id="L346">                        } catch (JSONException e) {</span>
+<span class="nc" id="L347">                            e.printStackTrace();</span>
+<span class="nc" id="L348">                            Toast.makeText(adminActivity.this, &quot;Error parsing user data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L349">                        }</span>
+<span class="fc" id="L350">                    }</span>
+                },
+<span class="fc" id="L352">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L355">                        Toast.makeText(adminActivity.this, &quot;Error fetching user data: &quot; + error.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L356">                    }</span>
+                });
+
+        // Add the request to the RequestQueue
+<span class="fc" id="L360">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L361">        requestQueue.add(jsonObjectRequest);</span>
+<span class="fc" id="L362">    }</span>
+
+    // Method to fetch user data from the backend and set it in the TextViews
+    private void fetchPayData(String username) {
+<span class="pc bpc" id="L366" title="2 of 4 branches missed.">        if (username == null || username.isEmpty()) {</span>
+<span class="nc" id="L367">            Toast.makeText(this, &quot;Username not found&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L368">            return;</span>
+        }
+
+<span class="fc" id="L371">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/salary/username/&quot; + username;</span>
+
+        // Create a new request
+<span class="fc" id="L374">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,</span>
+<span class="fc" id="L375">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Parse the response and set the values
+<span class="nc" id="L380">                            String takeHome = response.optString(&quot;takeHomePay&quot;, &quot;0.00&quot;);</span>
+<span class="nc" id="L381">                            String hours = response.optString(&quot;hoursWorked&quot;, &quot;0.00&quot;);</span>
+<span class="nc" id="L382">                            String payDay = response.optString(&quot;payday&quot;, &quot;00/00/00&quot;);</span>
+
+<span class="nc" id="L384">                            payHome.setText(&quot;Pay: $&quot; + takeHome);</span>
+<span class="nc" id="L385">                            hoursHome.setText(&quot;Hours worked: &quot; + hours + &quot; hours&quot;);</span>
+<span class="nc" id="L386">                            payDayHome.setText(&quot;Payday: &quot; + payDay);</span>
+
+
+
+<span class="nc" id="L390">                        } catch (Exception e) {</span>
+<span class="nc" id="L391">                            Toast.makeText(adminActivity.this, &quot;Error parsing data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L392">                        }</span>
+<span class="nc" id="L393">                    }</span>
+                },
+<span class="fc" id="L395">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="fc" id="L398">                        Toast.makeText(adminActivity.this, &quot;Error fetching data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L399">                    }</span>
+                });
+
+        // Add the request to the RequestQueue
+<span class="fc" id="L403">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="fc" id="L404">    }</span>
+
+    // Method to fetch user data for schedules. Get all users schedules and get next upcoming shift
+    private void fetchScheduleData(String username) {
+<span class="pc bpc" id="L408" title="2 of 4 branches missed.">        if (username == null || username.isEmpty()) {</span>
+<span class="nc" id="L409">            Toast.makeText(this, &quot;Username not found&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L410">            return;</span>
+        }
+
+<span class="fc" id="L413">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/schedules/assigned/&quot; + username;</span>
+
+<span class="fc" id="L415">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="fc" id="L416">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            // Initialize variables to track the next upcoming schedule
+<span class="nc" id="L421">                            JSONObject nextSchedule = null;</span>
+<span class="nc" id="L422">                            LocalDateTime now = null;</span>
+<span class="nc bnc" id="L423" title="All 2 branches missed.">                            if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.O) {</span>
+<span class="nc" id="L424">                                now = LocalDateTime.now();</span>
+                            }
+<span class="nc" id="L426">                            LocalDateTime closestTime = null;</span>
+
+                            // Date formatter for displaying the date and time
+<span class="nc" id="L429">                            DateTimeFormatter dateFormatter = null;</span>
+<span class="nc bnc" id="L430" title="All 2 branches missed.">                            if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.O) {</span>
+<span class="nc" id="L431">                                dateFormatter = DateTimeFormatter.ofPattern(&quot;MM/dd/yyyy&quot;);</span>
+                            }
+<span class="nc" id="L433">                            DateTimeFormatter timeFormatter = null; // 12-hour format with AM/PM</span>
+<span class="nc bnc" id="L434" title="All 2 branches missed.">                            if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.O) {</span>
+<span class="nc" id="L435">                                timeFormatter = DateTimeFormatter.ofPattern(&quot;hh:mm a&quot;);</span>
+                            }
+
+                            // Iterate through all schedules
+<span class="nc bnc" id="L439" title="All 2 branches missed.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L440">                                JSONObject schedule = response.getJSONObject(i);</span>
+
+                                // Check if the schedule is assigned to the specified username
+<span class="nc" id="L443">                                String assignedTo = schedule.optString(&quot;employeeAssignedTo&quot;, &quot;&quot;);</span>
+<span class="nc bnc" id="L444" title="All 2 branches missed.">                                if (!assignedTo.equals(username)) {</span>
+                                    // Skip this schedule if it's not assigned to the provided username
+<span class="nc" id="L446">                                    continue;</span>
+                                }
+
+                                // Parse the start time
+<span class="nc" id="L450">                                String startTimeStr = schedule.optString(&quot;startTime&quot;, &quot;&quot;);</span>
+<span class="nc" id="L451">                                LocalDateTime startTime = null;</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">                                if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.O) {</span>
+<span class="nc" id="L453">                                    startTime = LocalDateTime.parse(startTimeStr);</span>
+                                }
+
+                                // Check if the schedule is upcoming and closer than any previously found schedule
+<span class="nc bnc" id="L457" title="All 2 branches missed.">                                if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.O) {</span>
+<span class="nc bnc" id="L458" title="All 6 branches missed.">                                    if (startTime.isAfter(now) &amp;&amp; (closestTime == null || startTime.isBefore(closestTime))) {</span>
+<span class="nc" id="L459">                                        closestTime = startTime;</span>
+<span class="nc" id="L460">                                        nextSchedule = schedule;</span>
+                                    }
+                                }
+                            }
+
+                            // If an upcoming schedule was found, set it in the TextViews
+<span class="nc bnc" id="L466" title="All 2 branches missed.">                            if (nextSchedule != null) {</span>
+                                // Format the date and time
+<span class="nc" id="L468">                                String dateHome = null;</span>
+<span class="nc bnc" id="L469" title="All 2 branches missed.">                                if (android.os.Build.VERSION.SDK_INT &gt;= android.os.Build.VERSION_CODES.O) {</span>
+<span class="nc" id="L470">                                    dateHome = closestTime.toLocalDate().format(dateFormatter);</span>
+                                }
+<span class="nc" id="L472">                                String hoursStartHome = null;</span>
+<span class="nc bnc" id="L473" title="All 2 branches missed.">                                if (android.os.Build.VERSION.SDK_INT &gt;= android.os.Build.VERSION_CODES.O) {</span>
+<span class="nc" id="L474">                                    hoursStartHome = closestTime.format(timeFormatter);</span>
+                                }
+<span class="nc" id="L476">                                String hoursEndHome = null;</span>
+<span class="nc bnc" id="L477" title="All 2 branches missed.">                                if (android.os.Build.VERSION.SDK_INT &gt;= android.os.Build.VERSION_CODES.O) {</span>
+<span class="nc" id="L478">                                    hoursEndHome = LocalDateTime.parse(nextSchedule.optString(&quot;endTime&quot;)).format(timeFormatter);</span>
+                                }
+<span class="nc" id="L480">                                String projectHome = nextSchedule.optString(&quot;eventType&quot;, &quot;N/A&quot;);</span>
+
+<span class="nc" id="L482">                                shiftDateNextHome.setText(&quot;Next Shift: &quot; + dateHome);</span>
+<span class="nc" id="L483">                                shiftHoursNextHome.setText(&quot;Hours: &quot; + hoursStartHome + &quot; - &quot; + hoursEndHome);</span>
+<span class="nc" id="L484">                                shiftProjectNextHome.setText(&quot;Assigned Project: &quot; + projectHome);</span>
+<span class="nc" id="L485">                            } else {</span>
+                                // No upcoming schedule found for the user
+<span class="nc" id="L487">                                shiftDateNextHome.setText(&quot;No upcoming shifts&quot;);</span>
+<span class="nc" id="L488">                                shiftHoursNextHome.setText(&quot;&quot;);</span>
+<span class="nc" id="L489">                                shiftProjectNextHome.setText(&quot;&quot;);</span>
+                            }
+<span class="nc" id="L491">                        } catch (Exception e) {</span>
+<span class="nc" id="L492">                            Toast.makeText(adminActivity.this, &quot;Error parsing data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L493">                        }</span>
+<span class="nc" id="L494">                    }</span>
+                },
+<span class="fc" id="L496">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="fc" id="L499">                        Toast.makeText(adminActivity.this, &quot;Error fetching data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L500">                    }</span>
+                });
+
+        // Add the request to the RequestQueue
+<span class="fc" id="L504">        Volley.newRequestQueue(this).add(jsonArrayRequest);</span>
+<span class="fc" id="L505">    }</span>
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

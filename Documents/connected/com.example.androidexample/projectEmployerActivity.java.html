@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>projectEmployerActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">projectEmployerActivity.java</span></div><h1>projectEmployerActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+
+<span class="nc" id="L35">public class projectEmployerActivity extends AppCompatActivity {</span>
+    private LinearLayout projectListLayout;
+    private Button createProjButton;
+    private String loggedInUsername;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L42">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L43">        setContentView(R.layout.projectemployer);</span>
+
+        // Retrieve username from SharedPreferences
+<span class="nc" id="L46">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L47">        loggedInUsername = sharedPreferences.getString(&quot;username&quot;, null);</span>
+
+<span class="nc" id="L49">        createProjButton = findViewById(R.id.createTasks);</span>
+<span class="nc" id="L50">        projectListLayout = findViewById(R.id.projectlayoutEmployer);</span>
+
+<span class="nc" id="L52">        Toolbar toolbar = findViewById(R.id.toolbarEmployer);</span>
+<span class="nc" id="L53">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L54">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L55">        getSupportActionBar().setTitle(&quot;Projects&quot;);</span>
+
+<span class="nc" id="L57">        createProjButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L60">                Intent intent = new Intent(projectEmployerActivity.this, createTasksActivity.class);</span>
+<span class="nc" id="L61">                startActivity(intent);</span>
+<span class="nc" id="L62">            }</span>
+        });
+
+        // Fetch all projects from the backend
+<span class="nc" id="L66">        List&lt;Long&gt; projectIds = Arrays.asList(124L, 125L, 126L);</span>
+<span class="nc" id="L67">        fetchProjects(projectIds);</span>
+
+<span class="nc" id="L69">    }</span>
+
+    private void fetchProjects(List&lt;Long&gt; projectIds) {
+<span class="nc" id="L72">        projectListLayout.removeAllViews(); // Clear previous views</span>
+
+        // Loop through each project ID and fetch the project data
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        for (Long projectId : projectIds) {</span>
+<span class="nc" id="L76">            String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/project/projectId/&quot; + projectId;</span>
+
+<span class="nc" id="L78">            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L79">                    new Response.Listener&lt;JSONObject&gt;() {</span>
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            // Extract fields from the JSON object
+<span class="nc" id="L83">                            String projectName = response.optString(&quot;projectName&quot;, &quot;Unnamed Project&quot;);</span>
+<span class="nc" id="L84">                            String projectDescription = response.optString(&quot;description&quot;, &quot;No description available.&quot;);</span>
+<span class="nc" id="L85">                            String priority = response.optString(&quot;priority&quot;, &quot;No priority&quot;);</span>
+<span class="nc" id="L86">                            String dueDate = response.optString(&quot;dueDate&quot;, &quot;No due date&quot;);</span>
+
+                            // Create and configure a CardView for each project
+<span class="nc" id="L89">                            createProjectCard(projectName, projectDescription, priority, dueDate);</span>
+<span class="nc" id="L90">                        }</span>
+                    },
+<span class="nc" id="L92">                    new Response.ErrorListener() {</span>
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L95">                            error.printStackTrace();</span>
+<span class="nc" id="L96">                        }</span>
+                    });
+
+            // Add the request to the RequestQueue
+<span class="nc" id="L100">            Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="nc" id="L101">        }</span>
+<span class="nc" id="L102">    }</span>
+
+
+
+    private void createProjectCard(String projectName, String description, String priority, String dueDate) {
+<span class="nc" id="L107">        CardView cardView = new CardView(projectEmployerActivity.this);</span>
+<span class="nc" id="L108">        cardView.setCardElevation(8);</span>
+<span class="nc" id="L109">        cardView.setRadius(16);</span>
+<span class="nc" id="L110">        cardView.setUseCompatPadding(true);</span>
+
+        // Create a LinearLayout to hold the TextViews inside the CardView
+<span class="nc" id="L113">        LinearLayout cardLayout = new LinearLayout(projectEmployerActivity.this);</span>
+<span class="nc" id="L114">        cardLayout.setOrientation(LinearLayout.VERTICAL);</span>
+<span class="nc" id="L115">        cardLayout.setPadding(16, 16, 16, 16);</span>
+
+        // Create TextViews for each line
+<span class="nc" id="L118">        TextView nameView = new TextView(projectEmployerActivity.this);</span>
+<span class="nc" id="L119">        nameView.setText(&quot;Project: &quot; + projectName);</span>
+<span class="nc" id="L120">        nameView.setPadding(0, 0, 0, 8);</span>
+
+<span class="nc" id="L122">        TextView descriptionView = new TextView(projectEmployerActivity.this);</span>
+<span class="nc" id="L123">        descriptionView.setText(&quot;Description: &quot; + description);</span>
+<span class="nc" id="L124">        descriptionView.setPadding(0, 8, 0, 8);</span>
+
+<span class="nc" id="L126">        TextView dueDateView = new TextView(projectEmployerActivity.this);</span>
+<span class="nc" id="L127">        dueDateView.setText(&quot;Due Date: &quot; + dueDate);</span>
+<span class="nc" id="L128">        dueDateView.setPadding(0, 8, 0, 8);</span>
+
+<span class="nc" id="L130">        TextView priorityView = new TextView(projectEmployerActivity.this);</span>
+<span class="nc" id="L131">        priorityView.setText(&quot;Priority: &quot; + priority);</span>
+<span class="nc" id="L132">        priorityView.setPadding(8, 4, 8, 4);</span>
+
+        // Set background color based on priority level
+        int priorityBackgroundColor;
+<span class="nc bnc" id="L136" title="All 4 branches missed.">        switch (priority.toLowerCase()) {</span>
+            case &quot;high&quot;:
+<span class="nc" id="L138">                priorityBackgroundColor = ContextCompat.getColor(projectEmployerActivity.this, android.R.color.holo_red_light);</span>
+<span class="nc" id="L139">                break;</span>
+            case &quot;medium&quot;:
+<span class="nc" id="L141">                priorityBackgroundColor = ContextCompat.getColor(projectEmployerActivity.this, android.R.color.holo_orange_light);</span>
+<span class="nc" id="L142">                break;</span>
+            case &quot;low&quot;:
+<span class="nc" id="L144">                priorityBackgroundColor = ContextCompat.getColor(projectEmployerActivity.this, android.R.color.holo_green_light);</span>
+<span class="nc" id="L145">                break;</span>
+            default:
+<span class="nc" id="L147">                priorityBackgroundColor = ContextCompat.getColor(projectEmployerActivity.this, android.R.color.darker_gray);</span>
+        }
+<span class="nc" id="L149">        priorityView.setBackgroundColor(priorityBackgroundColor);</span>
+<span class="nc" id="L150">        priorityView.setTextColor(ContextCompat.getColor(projectEmployerActivity.this, android.R.color.white));</span>
+<span class="nc" id="L151">        priorityView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);</span>
+
+        // Add TextViews to the card layout
+<span class="nc" id="L154">        cardLayout.addView(nameView);</span>
+<span class="nc" id="L155">        cardLayout.addView(descriptionView);</span>
+<span class="nc" id="L156">        cardLayout.addView(dueDateView);</span>
+<span class="nc" id="L157">        cardLayout.addView(priorityView);</span>
+
+        // Add the card layout to the CardView
+<span class="nc" id="L160">        cardView.addView(cardLayout);</span>
+
+        // Add the CardView to the main layout
+<span class="nc" id="L163">        projectListLayout.addView(cardView);</span>
+
+
+<span class="nc" id="L166">        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) cardView.getLayoutParams();</span>
+<span class="nc" id="L167">        layoutParams.setMargins(16, 16, 16, 16);</span>
+<span class="nc" id="L168">        cardView.setLayoutParams(layoutParams);</span>
+<span class="nc" id="L169">    }</span>
+
+    // When on back button check userType to make sure goes back to right page
+    private void fetchUserProfile(final String username) {
+        // URL to fetch user profile using the username
+<span class="nc" id="L174">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/&quot; + username;</span>
+
+        // Make a GET request to fetch the user profile
+<span class="nc" id="L177">        JsonObjectRequest profileRequest = new JsonObjectRequest(Request.Method.GET, url,</span>
+                null, // No body needed for GET request
+<span class="nc" id="L179">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @SuppressLint(&quot;ShowToast&quot;)
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Extract user details from the response
+<span class="nc" id="L185">                            int userId = response.getInt(&quot;userId&quot;);</span>
+<span class="nc" id="L186">                            String fullName = response.getString(&quot;fullName&quot;);</span>
+<span class="nc" id="L187">                            String userType = response.getString(&quot;userType&quot;);</span>
+
+                            // Save these details in SharedPreferences
+<span class="nc" id="L190">                            SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L191">                            SharedPreferences.Editor editor = sharedPreferences.edit();</span>
+<span class="nc" id="L192">                            editor.putInt(&quot;userId&quot;, userId);</span>
+<span class="nc" id="L193">                            editor.putString(&quot;username&quot;, username);</span>
+<span class="nc" id="L194">                            editor.putString(&quot;userType&quot;, userType);</span>
+<span class="nc" id="L195">                            editor.putString(&quot;fullName&quot;, fullName);</span>
+<span class="nc" id="L196">                            editor.apply();</span>
+
+                            // Redirect to appropriate activity based on user type
+                            Intent intent;
+<span class="nc bnc" id="L200" title="All 4 branches missed.">                            switch (userType) {</span>
+                                case &quot;ADMIN&quot;:
+<span class="nc" id="L202">                                    intent = new Intent(projectEmployerActivity.this, adminActivity.class);</span>
+<span class="nc" id="L203">                                    break;</span>
+                                case &quot;EMPLOYER&quot;:
+<span class="nc" id="L205">                                    intent = new Intent(projectEmployerActivity.this, employerActivity.class);</span>
+<span class="nc" id="L206">                                    break;</span>
+                                case &quot;EMPLOYEE&quot;:
+<span class="nc" id="L208">                                    intent = new Intent(projectEmployerActivity.this, employeeActivity.class);</span>
+<span class="nc" id="L209">                                    break;</span>
+                                default:
+<span class="nc" id="L211">                                    Toast.makeText(projectEmployerActivity.this, &quot;Unknown user type&quot;, Toast.LENGTH_SHORT);</span>
+<span class="nc" id="L212">                                    return;</span>
+                            }
+<span class="nc" id="L214">                            startActivity(intent);</span>
+
+<span class="nc" id="L216">                        } catch (JSONException e) {</span>
+<span class="nc" id="L217">                            Toast.makeText(projectEmployerActivity.this,&quot;Error parsing user profile.&quot;, Toast.LENGTH_SHORT);</span>
+<span class="nc" id="L218">                            Log.e(&quot;Profile Error&quot;, &quot;JSON parsing error&quot;, e);</span>
+<span class="nc" id="L219">                        }</span>
+<span class="nc" id="L220">                    }</span>
+                },
+<span class="nc" id="L222">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L225">                        Toast.makeText(projectEmployerActivity.this,&quot;Failed to fetch user profile.&quot;, Toast.LENGTH_SHORT);</span>
+<span class="nc" id="L226">                        Log.e(&quot;Profile Error&quot;, error.toString());</span>
+<span class="nc" id="L227">                    }</span>
+                });
+
+        // Add the profile request to the Volley request queue
+<span class="nc" id="L231">        Volley.newRequestQueue(projectEmployerActivity.this).add(profileRequest);</span>
+<span class="nc" id="L232">    }</span>
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+<span class="nc" id="L238">            fetchUserProfile(loggedInUsername);</span>
+        }
+<span class="nc" id="L240">        return super.onOptionsItemSelected(item);</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

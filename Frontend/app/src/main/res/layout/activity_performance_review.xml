@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="#FFF0E0">
+
+    <!-- Toolbar -->
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarPReview"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFA500"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextColor="#FFFFFF"
+        tools:ignore="MissingConstraints">
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <!-- Dropdown to select employee -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Employee:"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_marginTop="16dp"
+        android:paddingStart="16dp"/>
+
+    <!-- Spinner to select employee -->
+    <Spinner
+        android:id="@+id/employeeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF0E0"
+        android:padding="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="#FFFF"/>
+
+    <!-- ScrollView to hold the reviews -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:layout_marginTop="16dp">
+
+        <!-- LinearLayout to hold reviews -->
+        <LinearLayout
+            android:id="@+id/reviewLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Button to add new review (disabled or not visible for this use case) -->
+    <Button
+        android:id="@+id/addReviewButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add New Review"
+        android:layout_gravity="center"
+        android:padding="16dp"
+        android:backgroundTint="#FFA500"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone" />
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#FFF0E0">
+
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarPStatus"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFA500"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextColor="#FFFFFF"
+        tools:ignore="MissingConstraints">
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- TextView for header -->
+    <TextView
+        android:id="@+id/projectText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="\n  In Progress:"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/toolbarPStatus">
+    </TextView>
+
+    <!-- ScrollView for dynamically generated CardViews -->
+    <ScrollView
+        android:id="@+id/scrollViewProjects"
+        android:layout_width="match_parent"
+        android:layout_height="377dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/projectText"
+        tools:ignore="MissingConstraints">
+
+        <LinearLayout
+            android:id="@+id/linearLayoutProjects"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <!-- TextView for header completed-->
+    <TextView
+        android:id="@+id/projectCompletedText"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:text="  Completed:"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/scrollViewProjects">
+    </TextView>
+
+    <!-- ScrollView for completed projects -->
+    <ScrollView
+        android:id="@+id/scrollViewCompletedProjects"
+        android:layout_width="match_parent"
+        android:layout_height="377dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/projectCompletedText">
+
+        <LinearLayout
+            android:id="@+id/linearLayoutCompletedProjects"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

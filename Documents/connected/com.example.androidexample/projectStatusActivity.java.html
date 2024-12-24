@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>projectStatusActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">projectStatusActivity.java</span></div><h1>projectStatusActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+<span class="nc" id="L31">public class projectStatusActivity extends AppCompatActivity {</span>
+
+    private LinearLayout linearLayoutProjects;
+    private String loggedInUsername;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L38">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L39">        setContentView(R.layout.projectstatus);</span>
+
+        // Retrieve username from SharedPreferences
+<span class="nc" id="L42">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L43">        loggedInUsername = sharedPreferences.getString(&quot;username&quot;, null);</span>
+
+        // Initialize the container for dynamic CardView generation
+<span class="nc" id="L46">        linearLayoutProjects = findViewById(R.id.linearLayoutProjects);</span>
+
+        // Setup Toolbar
+        @SuppressLint({&quot;MissingInflatedId&quot;, &quot;LocalSuppress&quot;})
+<span class="nc" id="L50">        Toolbar toolbar = findViewById(R.id.toolbarPStatus);</span>
+<span class="nc" id="L51">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L52">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L53">        getSupportActionBar().setTitle(&quot;Project Status&quot;);</span>
+
+        // Fetch project data from backend and generate UI
+<span class="nc" id="L56">        fetchProjectData();</span>
+<span class="nc" id="L57">    }</span>
+
+    private void fetchProjectData() {
+<span class="nc" id="L60">        String url = &quot;https://edb7e976-41f4-48a0-b7c9-a3977d49ba22.mock.pstmn.io/projectStatus&quot;; //MOCK URL</span>
+
+        // Volley JsonArrayRequest to fetch project data
+<span class="nc" id="L63">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(</span>
+                Request.Method.GET,
+                url,
+                null,
+<span class="nc" id="L67">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            // Loop through JSON array and create CardViews for each project
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L73">                                JSONObject project = response.getJSONObject(i);</span>
+
+                                // Extract project details
+<span class="nc" id="L76">                                String projectName = project.getString(&quot;name&quot;);</span>
+<span class="nc" id="L77">                                String dueDate = project.getString(&quot;dueDate&quot;);</span>
+<span class="nc" id="L78">                                int totalTasks = project.getInt(&quot;totalTasks&quot;);</span>
+<span class="nc" id="L79">                                int completedTasks = project.getInt(&quot;completedTasks&quot;);</span>
+
+                                // Dynamically add a CardView for this project
+<span class="nc" id="L82">                                addProjectCard(projectName, dueDate, totalTasks, completedTasks);</span>
+                            }
+<span class="nc" id="L84">                        } catch (JSONException e) {</span>
+<span class="nc" id="L85">                            Log.e(&quot;JSONError&quot;, &quot;Error parsing project data: &quot; + e.getMessage());</span>
+<span class="nc" id="L86">                        }</span>
+<span class="nc" id="L87">                    }</span>
+                },
+<span class="nc" id="L89">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L92">                        Log.e(&quot;VolleyError&quot;, &quot;Error fetching project data: &quot; + error.getMessage());</span>
+<span class="nc" id="L93">                    }</span>
+                });
+
+        // Add the request to the Volley request queue
+<span class="nc" id="L97">        Volley.newRequestQueue(this).add(jsonArrayRequest);</span>
+<span class="nc" id="L98">    }</span>
+
+    private void addProjectCard(String projectName, String dueDate, int totalTasks, int completedTasks) {
+        // Create a new CardView
+<span class="nc" id="L102">        CardView cardView = new CardView(this);</span>
+<span class="nc" id="L103">        cardView.setLayoutParams(new LinearLayout.LayoutParams(</span>
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+<span class="nc" id="L107">        cardView.setCardElevation(8);</span>
+<span class="nc" id="L108">        cardView.setRadius(12);</span>
+<span class="nc" id="L109">        cardView.setUseCompatPadding(true);</span>
+<span class="nc" id="L110">        cardView.setContentPadding(16, 16, 16, 16);</span>
+<span class="nc" id="L111">        cardView.setCardBackgroundColor(Color.WHITE);</span>
+
+        // Create a LinearLayout inside the CardView
+<span class="nc" id="L114">        LinearLayout cardLayout = new LinearLayout(this);</span>
+<span class="nc" id="L115">        cardLayout.setLayoutParams(new LinearLayout.LayoutParams(</span>
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+<span class="nc" id="L119">        cardLayout.setOrientation(LinearLayout.VERTICAL);</span>
+
+        // Add TextView for project name
+<span class="nc" id="L122">        TextView textProjectName = new TextView(this);</span>
+<span class="nc" id="L123">        textProjectName.setText(&quot;Project: &quot; + projectName);</span>
+<span class="nc" id="L124">        textProjectName.setTextSize(18);</span>
+<span class="nc" id="L125">        textProjectName.setTextColor(Color.BLACK);</span>
+<span class="nc" id="L126">        textProjectName.setPadding(0, 0, 0, 8);</span>
+
+        // Add TextView for due date
+<span class="nc" id="L129">        TextView textDueDate = new TextView(this);</span>
+<span class="nc" id="L130">        textDueDate.setText(&quot;Due Date: &quot; + dueDate);</span>
+<span class="nc" id="L131">        textDueDate.setTextSize(16);</span>
+<span class="nc" id="L132">        textDueDate.setTextColor(Color.DKGRAY);</span>
+<span class="nc" id="L133">        textDueDate.setPadding(0, 0, 0, 16);</span>
+
+        // Add a ProgressBar for task progress
+<span class="nc" id="L136">        ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);</span>
+<span class="nc" id="L137">        progressBar.setLayoutParams(new LinearLayout.LayoutParams(</span>
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                24
+        ));
+<span class="nc" id="L141">        progressBar.setMax(totalTasks);</span>
+<span class="nc" id="L142">        progressBar.setProgress(completedTasks);</span>
+
+        // Add all views to the card layout
+<span class="nc" id="L145">        cardLayout.addView(textProjectName);</span>
+<span class="nc" id="L146">        cardLayout.addView(textDueDate);</span>
+<span class="nc" id="L147">        cardLayout.addView(progressBar);</span>
+
+        // Add the card layout to the CardView
+<span class="nc" id="L150">        cardView.addView(cardLayout);</span>
+
+        // Check if all tasks are completed
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (completedTasks == totalTasks) {</span>
+            // Add CardView to the Completed Projects LinearLayout
+<span class="nc" id="L155">            LinearLayout completedProjectsLayout = findViewById(R.id.linearLayoutCompletedProjects);</span>
+<span class="nc" id="L156">            completedProjectsLayout.addView(cardView);</span>
+<span class="nc" id="L157">        } else {</span>
+            // Add CardView to the Ongoing Projects LinearLayout
+<span class="nc" id="L159">            linearLayoutProjects.addView(cardView);</span>
+        }
+<span class="nc" id="L161">    }</span>
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+<span class="nc" id="L167">            fetchUserProfile(loggedInUsername);</span>
+<span class="nc" id="L168">            return true;</span>
+        }
+<span class="nc" id="L170">        return super.onOptionsItemSelected(item);</span>
+    }
+
+    private void fetchUserProfile(String username) {
+<span class="nc" id="L174">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/&quot; + username;</span>
+
+<span class="nc" id="L176">        JsonObjectRequest profileRequest = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                url,
+                null,
+                response -&gt; {
+                    try {
+<span class="nc" id="L182">                        int userId = response.getInt(&quot;userId&quot;);</span>
+<span class="nc" id="L183">                        String fullName = response.getString(&quot;fullName&quot;);</span>
+<span class="nc" id="L184">                        String userType = response.getString(&quot;userType&quot;);</span>
+
+<span class="nc" id="L186">                        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L187">                        SharedPreferences.Editor editor = sharedPreferences.edit();</span>
+<span class="nc" id="L188">                        editor.putInt(&quot;userId&quot;, userId);</span>
+<span class="nc" id="L189">                        editor.putString(&quot;username&quot;, username);</span>
+<span class="nc" id="L190">                        editor.putString(&quot;userType&quot;, userType);</span>
+<span class="nc" id="L191">                        editor.putString(&quot;fullName&quot;, fullName);</span>
+<span class="nc" id="L192">                        editor.apply();</span>
+
+                        Intent intent;
+<span class="nc bnc" id="L195" title="All 4 branches missed.">                        switch (userType) {</span>
+                            case &quot;ADMIN&quot;:
+<span class="nc" id="L197">                                intent = new Intent(projectStatusActivity.this, adminActivity.class);</span>
+<span class="nc" id="L198">                                break;</span>
+                            case &quot;EMPLOYER&quot;:
+<span class="nc" id="L200">                                intent = new Intent(projectStatusActivity.this, employerActivity.class);</span>
+<span class="nc" id="L201">                                break;</span>
+                            case &quot;EMPLOYEE&quot;:
+<span class="nc" id="L203">                                intent = new Intent(projectStatusActivity.this, employeeActivity.class);</span>
+<span class="nc" id="L204">                                break;</span>
+                            default:
+<span class="nc" id="L206">                                Toast.makeText(this, &quot;Unknown user type&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L207">                                return;</span>
+                        }
+<span class="nc" id="L209">                        startActivity(intent);</span>
+
+<span class="nc" id="L211">                    } catch (JSONException e) {</span>
+<span class="nc" id="L212">                        Toast.makeText(this, &quot;Error parsing user profile.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L213">                        Log.e(&quot;Profile Error&quot;, &quot;JSON parsing error&quot;, e);</span>
+<span class="nc" id="L214">                    }</span>
+<span class="nc" id="L215">                },</span>
+                error -&gt; {
+<span class="nc" id="L217">                    Toast.makeText(this, &quot;Failed to fetch user profile.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L218">                    Log.e(&quot;Profile Error&quot;, error.toString());</span>
+<span class="nc" id="L219">                });</span>
+
+<span class="nc" id="L221">        Volley.newRequestQueue(this).add(profileRequest);</span>
+<span class="nc" id="L222">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

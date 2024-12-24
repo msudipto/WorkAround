@@ -1,0 +1,97 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: UserRepository (coms309.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.repository;
+&nbsp;
+&nbsp;import coms309.entity.User;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface UserRepository extends JpaRepository&lt;User, Long&gt; {
+&nbsp;
+&nbsp;    // Find users by role (e.g., &quot;Admin&quot;, &quot;Employer&quot;, &quot;Employee&quot;)
+&nbsp;    List&lt;User&gt; findByRole(String role);
+&nbsp;
+&nbsp;    // Find a user by their name (unique name assumed)
+&nbsp;    Optional&lt;User&gt; findByName(String name);
+&nbsp;
+&nbsp;    // Find users assigned to a specific task ID
+&nbsp;    List&lt;User&gt; findByTasksSet_Id(Long taskId);
+&nbsp;
+&nbsp;    // Find users with schedules within a certain date range (join with schedules)
+&nbsp;    // Additional query methods may be necessary in a custom repository or query annotation
+&nbsp;    List&lt;User&gt; findBySchedulesList_StartTimeBetween(LocalDateTime start, LocalDateTime end);
+&nbsp;
+&nbsp;    // Find users who have been assigned at least one task
+&nbsp;    List&lt;User&gt; findByTasksSetIsNotEmpty();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 23:25</div>
+</div>
+</body>
+</html>

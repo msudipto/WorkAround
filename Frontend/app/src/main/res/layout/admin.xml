@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".adminActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF0E0">
+
+
+    <!--Logo-->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        android:layout_gravity="left"
+        android:src="@drawable/workaroundlogo"
+        android:layout_marginTop="-30dp"
+        android:layout_marginLeft="-10dp">
+    </ImageView>
+
+    <!-- Search Bar -->
+    <LinearLayout
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="-100dp"
+        android:layout_marginLeft="160dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:iconifiedByDefault="false"
+            android:queryHint="Search here...">
+        </SearchView>
+
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFA500"
+            android:text="Search">
+        </Button>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/resultTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:minHeight="50dp"
+        android:textColor="#000000">
+    </TextView>
+</LinearLayout>
+
+
+<TextView
+        android:id="@+id/welcomeMessage"
+        android:layout_width="380dp"
+        android:layout_height="50dp"
+        android:text="Good Morning, Ethan Roepke!"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="15dp">
+    </TextView>
+
+    <Button
+        android:id="@+id/checkButton"
+        android:layout_width="400dp"
+        android:layout_height="90dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/lightGrey"
+        android:background="@drawable/square_button">
+    </Button>
+
+
+    <FrameLayout
+        android:id="@+id/frameChange"
+        android:layout_width="400dp"
+        android:layout_height="90dp"
+        android:background="@drawable/square_button_border"
+        android:layout_gravity="center"
+        android:layout_marginTop="-90dp"
+        android:clickable="false">
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/checkText"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:text="Clock In"
+        android:textColor="@color/black"
+        android:textSize="23dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="-90dp">
+    </TextView>
+
+    <Chronometer
+        android:id="@+id/timeText"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:format="Time: %s"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="-25dp">
+    </Chronometer>
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/projStatusButton"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:backgroundTint="#D3D3D3"
+            android:background="@drawable/square_button">
+        </Button>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <Button
+            android:id="@+id/assignProjButton"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:backgroundTint="#D3D3D3"
+            android:background="@drawable/square_button">
+        </Button>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <Button
+            android:id="@+id/employeeAttendanceButton"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:backgroundTint="#D3D3D3"
+            android:background="@drawable/square_button">
+        </Button>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <Button
+            android:id="@+id/employeeStatusbutton"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:backgroundTint="#D3D3D3"
+            android:background="@drawable/square_button">
+        </Button>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="-100dp">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false">
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false"
+            android:focusable="false">
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false"
+            android:focusable="false">
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false"
+            android:focusable="false">
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="-100dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:text="Project \nStatus"
+            android:gravity="center"
+            android:textSize="17dp"
+            android:textColor="@color/black"
+            android:clickable="false">
+        </TextView>
+
+        <!-- Spacer between text -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:text="Assign \nProject"
+            android:gravity="center"
+            android:textSize="17dp"
+            android:textColor="@color/black"
+            android:clickable="false"
+            android:focusable="false">
+        </TextView>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:text="Employee \nAttendance"
+            android:gravity="center"
+            android:textSize="17dp"
+            android:textColor="@color/black"
+            android:clickable="false"
+            android:focusable="false">
+        </TextView>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:text="Employee \nStatus"
+            android:gravity="center"
+            android:textSize="17dp"
+            android:textColor="@color/black"
+            android:clickable="false"
+            android:focusable="false">
+        </TextView>
+    </LinearLayout>
+
+    <!-- Shift information -->
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/square_button_border"
+        android:padding="10dp">
+
+        <!-- Next Shift -->
+        <TextView
+            android:id="@+id/nextShiftText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Next Shift: 00/00/0000"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="30dp">
+        </TextView>
+
+        <!-- Shift Hours -->
+        <TextView
+            android:id="@+id/shiftHoursText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Shift Hours: 00:00 - 00:00"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:gravity="left"
+            android:layout_marginLeft="30dp">
+        </TextView>
+
+        <!-- Assigned Projects -->
+        <TextView
+            android:id="@+id/assignedProjText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Assigned Projects: N/A"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:gravity="left"
+            android:layout_marginLeft="30dp">
+        </TextView>
+    </LinearLayout>
+
+    <!-- Pay section -->
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/square_button_border"
+        android:padding="10dp">
+
+        <!-- Pay -->
+        <TextView
+            android:id="@+id/payText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pay: $0.00"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="30dp">
+        </TextView>
+
+        <!-- Hours Worked -->
+        <TextView
+            android:id="@+id/hoursWorkedText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hours Worked: 0.00 hours"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="30dp">
+        </TextView>
+
+        <!-- Payday -->
+        <TextView
+            android:id="@+id/payDateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payday: 00/00/0000"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="30dp">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+
+        <!-- First Button -->
+        <Button
+            android:id="@+id/messageButton"
+            android:layout_width="198dp"
+            android:layout_height="100dp"
+            android:background="@drawable/square_button"
+            android:textColor="@color/black">
+        </Button>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <!-- Second Button -->
+        <Button
+            android:id="@+id/performanceButton"
+            android:layout_width="198dp"
+            android:layout_height="100dp"
+            android:background="@drawable/square_button">
+        </Button>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="-100dp">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false">
+        </FrameLayout>
+
+
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false">
+        </FrameLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-100dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="198dp"
+            android:layout_height="100dp"
+            android:text="Messages"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="18dp">
+        </TextView>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <TextView
+            android:layout_width="198dp"
+            android:layout_height="100dp"
+            android:text="Performance \nReviews"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="18dp">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="412dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="28dp">
+
+        <Button
+            android:id="@+id/profileButton"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:backgroundTint="#D3D3D3"
+            android:background="@drawable/square_button">
+        </Button>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <Button
+            android:id="@+id/projButton"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:backgroundTint="#D3D3D3"
+            android:background="@drawable/square_button">
+        </Button>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <Button
+            android:id="@+id/selfServiceButton"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:backgroundTint="#D3D3D3"
+            android:background="@drawable/square_button">
+        </Button>
+
+        <!-- Spacer between buttons -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <Button
+            android:id="@+id/payButton"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:background="@drawable/square_button">
+        </Button>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="412dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="-100dp">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false">
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false">
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false">
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/square_button_border"
+            android:clickable="false">
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="412dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-100dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:text="Profile"
+            android:gravity="center"
+            android:textSize="17dp"
+            android:textColor="@color/black">
+        </TextView>
+
+        <!-- Spacer between text -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:text="Projects"
+            android:gravity="center"
+            android:textSize="17dp"
+            android:textColor="@color/black">
+        </TextView>
+
+        <!-- Spacer between text -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:text="Self \nService"
+            android:gravity="center"
+            android:textSize="17dp"
+            android:textColor="@color/black">
+        </TextView>
+
+        <!-- Spacer between text -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:text="Pay"
+            android:gravity="center"
+            android:textSize="17dp"
+            android:textColor="@color/black">
+        </TextView>
+
+        <!-- Spacer between text -->
+        <View
+            android:layout_width="4dp"
+            android:layout_height="100dp">
+        </View>
+    </LinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

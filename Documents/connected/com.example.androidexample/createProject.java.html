@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>createProject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">createProject.java</span></div><h1>createProject.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="nc" id="L30">public class createProject extends AppCompatActivity {</span>
+
+    private EditText projectNameEditText;
+    private EditText projectDescriptionEditText;
+    private EditText dueDateEditText;
+    private Spinner priorityLevelSpinner;
+    private EditText employerAssigned;
+    private Button saveButton;
+
+    private RequestQueue requestQueue;
+
+    @SuppressLint({&quot;MissingInflatedId&quot;, &quot;WrongViewCast&quot;})
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L44">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L45">        setContentView(R.layout.createproject);</span>
+
+<span class="nc" id="L47">        projectNameEditText = findViewById(R.id.project_name);</span>
+<span class="nc" id="L48">        projectDescriptionEditText = findViewById(R.id.project_description);</span>
+<span class="nc" id="L49">        dueDateEditText = findViewById(R.id.due_date);</span>
+<span class="nc" id="L50">        priorityLevelSpinner = findViewById(R.id.priority_level);</span>
+<span class="nc" id="L51">        employerAssigned = findViewById(R.id.employer_Assigned);</span>
+<span class="nc" id="L52">        saveButton = findViewById(R.id.save_button);</span>
+
+<span class="nc" id="L54">        requestQueue = Volley.newRequestQueue(this);</span>
+
+<span class="nc" id="L56">        Toolbar toolbar = findViewById(R.id.toolBarCreate);</span>
+<span class="nc" id="L57">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L58">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L59">        getSupportActionBar().setTitle(&quot;Create Project&quot;);</span>
+
+<span class="nc" id="L61">        ArrayAdapter&lt;CharSequence&gt; adapter = ArrayAdapter.createFromResource(this, R.array.priority_levels, android.R.layout.simple_spinner_item);</span>
+<span class="nc" id="L62">        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);</span>
+<span class="nc" id="L63">        priorityLevelSpinner.setAdapter(adapter);</span>
+
+<span class="nc" id="L65">        saveButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L68">                createProject();</span>
+<span class="nc" id="L69">            }</span>
+        });
+<span class="nc" id="L71">    }</span>
+
+    private void createProject() {
+<span class="nc" id="L74">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/project/create&quot;;</span>
+
+        // Collecting input data
+<span class="nc" id="L77">        String projectName = projectNameEditText.getText().toString();</span>
+<span class="nc" id="L78">        String projectDescription = projectDescriptionEditText.getText().toString();</span>
+<span class="nc" id="L79">        String dueDate = dueDateEditText.getText().toString();</span>
+<span class="nc" id="L80">        String priorityLevel = priorityLevelSpinner.getSelectedItem().toString();</span>
+<span class="nc" id="L81">        String employer = employerAssigned.getText().toString();</span>
+
+        // Constructing the JSON body
+<span class="nc" id="L84">        JSONObject jsonBody = new JSONObject();</span>
+        try {
+<span class="nc" id="L86">            jsonBody.put(&quot;projectName&quot;, projectName);</span>
+<span class="nc" id="L87">            jsonBody.put(&quot;Description&quot;, projectDescription);</span>
+<span class="nc" id="L88">            jsonBody.put(&quot;dueDate&quot;, dueDate);</span>
+<span class="nc" id="L89">            jsonBody.put(&quot;priority&quot;, priorityLevel);</span>
+<span class="nc" id="L90">            jsonBody.put(&quot;employerUsername&quot;, new ArrayList&lt;String&gt;(){{ add(employer); }});</span>
+
+<span class="nc" id="L92">        } catch (JSONException e) {</span>
+<span class="nc" id="L93">            e.printStackTrace();</span>
+<span class="nc" id="L94">        }</span>
+
+        // Creating a POST request
+<span class="nc" id="L97">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonBody,</span>
+<span class="nc" id="L98">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L101">                        Toast.makeText(createProject.this, &quot;Project created successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+                        // Navigate back to project activity
+<span class="nc" id="L103">                        Intent intent = new Intent(createProject.this, projectActivity.class);</span>
+<span class="nc" id="L104">                        startActivity(intent);</span>
+<span class="nc" id="L105">                        finish();</span>
+<span class="nc" id="L106">                    }</span>
+                },
+<span class="nc" id="L108">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L111">                        Toast.makeText(createProject.this, &quot;Failed to create project: &quot; + error.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L112">                    }</span>
+                });
+
+        // Adding the request to the queue
+<span class="nc" id="L116">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L117">    }</span>
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+<span class="nc" id="L122">            Intent intent = new Intent(createProject.this, projectActivity.class);</span>
+<span class="nc" id="L123">            startActivity(intent);</span>
+<span class="nc" id="L124">            return true;</span>
+        }
+<span class="nc" id="L126">        return super.onOptionsItemSelected(item);</span>
+    }
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

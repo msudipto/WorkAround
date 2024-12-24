@@ -1,0 +1,466 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserProfileController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: UserProfileController (coms309.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserProfileController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.5%
+  </span>
+  <span class="absValue">
+    (2/21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.7%
+  </span>
+  <span class="absValue">
+    (2/73)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.controller;
+&nbsp;
+&nbsp;import coms309.dto.SignUpDTO;
+&nbsp;import coms309.dto.UserDTO;
+&nbsp;import coms309.entity.UserProfile;
+&nbsp;import coms309.service.UserService;
+&nbsp;import coms309.exception.ResourceNotFoundException;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;// OpenAPI 3 annotations
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller class for handling user profile-related API endpoints.
+&nbsp; */
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/userprofile&quot;)
+&nbsp;@Tag(name = &quot;User Profile Management&quot;, description = &quot;Operations for creating, retrieving, updating, and managing user profiles&quot;)
+<b class="fc">&nbsp;public class UserProfileController {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger logger = LoggerFactory.getLogger(UserProfileController.class);</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve all user profiles.
+&nbsp;     *
+&nbsp;     * @return List of all users.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve all user profiles&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved all user profiles&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/all&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;UserProfile&gt;&gt; getAllUserProfiles() {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Fetching all user profiles&quot;);</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;UserProfile&gt; users = userService.getAllUsers();</b>
+&nbsp;
+<b class="nc">&nbsp;            if (users.isEmpty()) {</b>
+<b class="nc">&nbsp;                logger.info(&quot;No user profiles found.&quot;);</b>
+<b class="nc">&nbsp;                return ResponseEntity.noContent().build();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Map to DTOs to prevent serialization issues
+<b class="nc">&nbsp;            List&lt;UserProfile&gt; userDTOs = users.stream()</b>
+<b class="nc">&nbsp;                    .map(user -&gt; new UserProfile(</b>
+<b class="nc">&nbsp;                            user.getUserId(),</b>
+<b class="nc">&nbsp;                            user.getFullName(),</b>
+<b class="nc">&nbsp;                            user.getUsername(),</b>
+<b class="nc">&nbsp;                            user.getEmail()</b>
+&nbsp;                    ))
+<b class="nc">&nbsp;                    .collect(Collectors.toList());</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok(userDTOs);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            logger.error(&quot;Error occurred while fetching user profiles: &quot;, e);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve a user profile by ID.
+&nbsp;     *
+&nbsp;     * @param id The user ID.
+&nbsp;     * @return The user profile if found.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve a user profile by ID&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved user profile&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User profile not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;UserProfile&gt; getUserProfileById(
+&nbsp;            @Parameter(description = &quot;ID of the user to retrieve&quot;, required = true)
+&nbsp;            @PathVariable Long id) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Fetching user profile with ID: {}&quot;, id);</b>
+<b class="nc">&nbsp;        Optional&lt;UserProfile&gt; userProfileOpt = userService.getUserById(id);</b>
+<b class="nc">&nbsp;        return userProfileOpt.map(ResponseEntity::ok)</b>
+<b class="nc">&nbsp;                .orElseGet(() -&gt; {</b>
+<b class="nc">&nbsp;                    logger.warn(&quot;Controller: User profile not found for ID: {}&quot;, id);</b>
+<b class="nc">&nbsp;                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;                });
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve a user profile by username.
+&nbsp;     *
+&nbsp;     * @param username The username of the user.
+&nbsp;     * @return The user profile if found.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve a user profile by username&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved user profile&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User profile not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/username/{username}&quot;)
+&nbsp;    public ResponseEntity&lt;UserProfile&gt; getUserProfileByUsername(
+&nbsp;            @Parameter(description = &quot;Username of the user to retrieve&quot;, required = true)
+&nbsp;            @PathVariable String username) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Fetching user profile with username: {}&quot;, username);</b>
+<b class="nc">&nbsp;        Optional&lt;UserProfile&gt; userProfileOpt = userService.getUserByUsername(username);</b>
+<b class="nc">&nbsp;        return userProfileOpt.map(ResponseEntity::ok)</b>
+<b class="nc">&nbsp;                .orElseGet(() -&gt; {</b>
+<b class="nc">&nbsp;                    logger.warn(&quot;Controller: User profile not found for username: {}&quot;, username);</b>
+<b class="nc">&nbsp;                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;                });
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve a user profile by email.
+&nbsp;     *
+&nbsp;     * @param email The email of the user.
+&nbsp;     * @return The user profile if found.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve a user profile by email&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved user profile&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User profile not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/email/{email}&quot;)
+&nbsp;    public ResponseEntity&lt;UserProfile&gt; getUserProfileByEmail(
+&nbsp;            @Parameter(description = &quot;Email of the user to retrieve&quot;, required = true)
+&nbsp;            @PathVariable String email) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Fetching user profile with email: {}&quot;, email);</b>
+<b class="nc">&nbsp;        Optional&lt;UserProfile&gt; userProfileOpt = userService.getUserByEmail(email);</b>
+<b class="nc">&nbsp;        return userProfileOpt.map(ResponseEntity::ok)</b>
+<b class="nc">&nbsp;                .orElseGet(() -&gt; {</b>
+<b class="nc">&nbsp;                    logger.warn(&quot;Controller: User profile not found for email: {}&quot;, email);</b>
+<b class="nc">&nbsp;                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;                });
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new user profile.
+&nbsp;     *
+&nbsp;     * @param user The user profile to create.
+&nbsp;     * @return The created user profile.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Create a new user profile&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Successfully created the user profile&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid user profile data&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/create&quot;)
+&nbsp;    public ResponseEntity&lt;UserProfile&gt; createUserProfile(@RequestBody UserProfile user) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Creating new user profile&quot;);</b>
+<b class="nc">&nbsp;        UserProfile createdUser = userService.createUser(user);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Update an existing user profile by ID.
+&nbsp;     *
+&nbsp;     * @param id   The ID of the user to update.
+&nbsp;     * @param user The updated user profile details.
+&nbsp;     * @return The updated user profile if successful.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Update an existing user profile by ID&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully updated the user profile&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User profile not found&quot;)
+&nbsp;    })
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;UserProfile&gt; updateUserProfile(
+&nbsp;            @Parameter(description = &quot;ID of the user to update&quot;, required = true)
+&nbsp;            @PathVariable Long id,
+&nbsp;            @RequestBody UserProfile user) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Updating user profile with ID: {}&quot;, id);</b>
+<b class="nc">&nbsp;        UserProfile updatedUser = userService.updateUser(id, user);</b>
+<b class="nc">&nbsp;        if (updatedUser != null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(updatedUser);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            logger.warn(&quot;Controller: User profile not found for ID: {}&quot;, id);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete a user profile by ID.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user to delete.
+&nbsp;     * @return ResponseEntity indicating the outcome.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Delete a user profile by ID&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;204&quot;, description = &quot;Successfully deleted the user profile&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User profile not found&quot;)
+&nbsp;    })
+&nbsp;    @DeleteMapping(&quot;/{userId}&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteUserProfileByUserId(@PathVariable Long userId) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Deleting user profile with user_id: {}&quot;, userId);</b>
+<b class="nc">&nbsp;        boolean deleted = userService.deleteUserByUserId(userId);</b>
+<b class="nc">&nbsp;        if (deleted) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.noContent().build(); // HTTP 204</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            logger.warn(&quot;Controller: User profile not found for user_id: {}&quot;, userId);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // HTTP 404</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Submit time for a week for a user.
+&nbsp;     *
+&nbsp;     * @param user The user profile with updated time.
+&nbsp;     * @return ResponseEntity indicating the outcome.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Submit time for a week for a user&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully submitted time for the week&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User profile not found&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/submitTime&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; submitTimeForWeek(@Valid @RequestBody UserProfile user) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Submitting time for week for user ID: {}&quot;, user.getUserId());</b>
+<b class="nc">&nbsp;        boolean success = userService.submitTimeForWeek(user);</b>
+<b class="nc">&nbsp;        if (success) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(&quot;Time submitted successfully.&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(&quot;User not found.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Unsubmit time for a week for a user.
+&nbsp;     *
+&nbsp;     * @param user The user profile.
+&nbsp;     * @return ResponseEntity indicating the outcome.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Unsubmit time for a week for a user&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully unsubmited time for the week&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User profile not found&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/unsubmitTime&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; unsubmitTimeForWeek(@Valid @RequestBody UserProfile user) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Unsubmitting time for week for user ID: {}&quot;, user.getUserId());</b>
+<b class="nc">&nbsp;        boolean success = userService.unsubmitTimeForWeek(user);</b>
+<b class="nc">&nbsp;        if (success) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(&quot;Time unsubmited successfully.&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(&quot;User not found.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve the next shift for a user.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user.
+&nbsp;     * @return The next shift details if found.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve the next shift for a user&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved next shift&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User profile not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/{userId}/nextShift&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; getNextShift(@PathVariable Long userId) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Retrieving next shift for user ID: {}&quot;, userId);</b>
+<b class="nc">&nbsp;        return userService.getNextShift(userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve the time worked for a user.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user.
+&nbsp;     * @return The time worked details if found.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve time worked for a user&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved time worked&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User profile not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/{userId}/timeWorked&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; getTimeWorked(@PathVariable Long userId) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Retrieving time worked for user ID: {}&quot;, userId);</b>
+<b class="nc">&nbsp;        return userService.getTimeWorked(userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handle password reset for a user.
+&nbsp;     *
+&nbsp;     * @param forgotUserDTO DTO containing email and new password.
+&nbsp;     * @return ResponseEntity indicating the outcome.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Handle password reset for a user&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully reset the password&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;)
+&nbsp;    })
+&nbsp;    @PutMapping(&quot;/forgotPassword&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; forgotPassword(@Valid @RequestBody UserDTO forgotUserDTO) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Attempting to reset password for email: {}&quot;, forgotUserDTO.getEmail());</b>
+<b class="nc">&nbsp;        return userService.forgotPassword(forgotUserDTO);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handle user login.
+&nbsp;     *
+&nbsp;     * @param loginUserDTO DTO containing username and password.
+&nbsp;     * @return ResponseEntity indicating the outcome.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Handle user login&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully logged in&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid login credentials&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; login(@RequestBody UserDTO loginUserDTO) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Attempting login for username: {}&quot;, loginUserDTO.getUsername());</b>
+<b class="nc">&nbsp;        return userService.login(loginUserDTO);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handle user signup.
+&nbsp;     *
+&nbsp;     * @param signUpUserProfileDTO DTO containing signup information.
+&nbsp;     * @return ResponseEntity indicating the outcome.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Handle user signup&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Successfully signed up&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid signup data&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/signup&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; signup(@RequestBody SignUpDTO signUpUserProfileDTO) {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Attempting signup for username: {}&quot;, signUpUserProfileDTO.getUsername());</b>
+<b class="nc">&nbsp;        return userService.signup(signUpUserProfileDTO);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets all usernames.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve all usernames&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved all usernames&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/usernames&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;UserProfile&gt;&gt; getAllUsernames() {
+<b class="nc">&nbsp;        logger.info(&quot;Controller: Fetching all usernames&quot;);</b>
+<b class="nc">&nbsp;        List&lt;UserProfile&gt; usernames = userService.getAllUsers();</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(usernames);</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 23:25</div>
+</div>
+</body>
+</html>

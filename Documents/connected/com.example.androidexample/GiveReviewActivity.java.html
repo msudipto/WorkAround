@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GiveReviewActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">GiveReviewActivity.java</span></div><h1>GiveReviewActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="nc" id="L30">public class GiveReviewActivity extends AppCompatActivity {</span>
+
+    private Spinner employeeSpinner;
+    private Spinner standardSpinner; // New spinner for standards
+    private EditText reviewEditText;
+    private Button submitReviewButton;
+    private String loggedInUsername;
+    private String selectedEmployeeName;
+    private int selectedEmployeeId;
+    private String selectedStandard; // To store the selected standard
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L43">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L44">        setContentView(R.layout.activity_give_review);</span>
+
+        // Set up the toolbar
+<span class="nc" id="L47">        Toolbar toolbar = findViewById(R.id.toolBarGiveReview);</span>
+<span class="nc" id="L48">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L49">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L50">        getSupportActionBar().setTitle(&quot;Give Review&quot;);</span>
+
+        // Retrieve username from SharedPreferences
+<span class="nc" id="L53">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L54">        loggedInUsername = sharedPreferences.getString(&quot;username&quot;, null);</span>
+
+        // Initialize views
+<span class="nc" id="L57">        employeeSpinner = findViewById(R.id.employeeSpinner);</span>
+<span class="nc" id="L58">        standardSpinner = findViewById(R.id.standardSpinner); // Initialize standard spinner</span>
+<span class="nc" id="L59">        reviewEditText = findViewById(R.id.reviewEditText);</span>
+<span class="nc" id="L60">        submitReviewButton = findViewById(R.id.submitReviewButton);</span>
+
+        // Load employee list (simulating from an API)
+<span class="nc" id="L63">        loadEmployees();</span>
+
+        // Load standard spinner
+<span class="nc" id="L66">        setupStandardSpinner();</span>
+
+        // Set up the submit button click listener
+<span class="nc" id="L69">        submitReviewButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L72">                submitReview();</span>
+<span class="nc" id="L73">            }</span>
+        });
+<span class="nc" id="L75">    }</span>
+
+    private void loadEmployees() {
+        // Fetch the list of user profiles (API call)
+<span class="nc" id="L79">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/all&quot;;</span>
+<span class="nc" id="L80">        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L81">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            // Temporary list to hold usernames
+<span class="nc" id="L86">                            List&lt;String&gt; userNames = new ArrayList&lt;&gt;();</span>
+
+                            // Populate the list, excluding the logged-in user
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L90">                                JSONObject user = response.getJSONObject(i);</span>
+<span class="nc" id="L91">                                String username = user.getString(&quot;username&quot;);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                                if (!username.equals(loggedInUsername)) {</span>
+<span class="nc" id="L93">                                    userNames.add(username);</span>
+                                }
+                            }
+
+                            // Convert the list to an array
+<span class="nc" id="L98">                            String[] userNameArray = userNames.toArray(new String[0]);</span>
+
+                            // Set up the spinner adapter
+<span class="nc" id="L101">                            ArrayAdapter&lt;String&gt; adapter = new ArrayAdapter&lt;&gt;(GiveReviewActivity.this,</span>
+                                    android.R.layout.simple_spinner_item, userNameArray);
+<span class="nc" id="L103">                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);</span>
+<span class="nc" id="L104">                            employeeSpinner.setAdapter(adapter);</span>
+
+                            // Set up the spinner item selection listener
+<span class="nc" id="L107">                            employeeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {</span>
+                                @Override
+                                public void onItemSelected(AdapterView&lt;?&gt; parentView, View selectedItemView, int position, long id) {
+                                    try {
+                                        // Find the corresponding user from the original response
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                                        for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L113">                                            JSONObject user = response.getJSONObject(i);</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                                            if (user.getString(&quot;username&quot;).equals(userNameArray[position])) {</span>
+<span class="nc" id="L115">                                                selectedEmployeeName = user.getString(&quot;username&quot;);</span>
+<span class="nc" id="L116">                                                selectedEmployeeId = user.getInt(&quot;userId&quot;);</span>
+<span class="nc" id="L117">                                                break;</span>
+                                            }
+                                        }
+<span class="nc" id="L120">                                    } catch (JSONException e) {</span>
+<span class="nc" id="L121">                                        Log.e(&quot;Error&quot;, &quot;Failed to parse user data&quot;, e);</span>
+<span class="nc" id="L122">                                    }</span>
+<span class="nc" id="L123">                                }</span>
+
+                                @Override
+                                public void onNothingSelected(AdapterView&lt;?&gt; parentView) {
+                                    // Do nothing
+<span class="nc" id="L128">                                }</span>
+                            });
+<span class="nc" id="L130">                        } catch (JSONException e) {</span>
+<span class="nc" id="L131">                            Log.e(&quot;Error&quot;, &quot;Failed to parse user data&quot;, e);</span>
+<span class="nc" id="L132">                        }</span>
+<span class="nc" id="L133">                    }</span>
+                },
+<span class="nc" id="L135">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L138">                        Toast.makeText(GiveReviewActivity.this, &quot;Failed to load user data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L139">                    }</span>
+                });
+
+        // Add the request to the Volley queue
+<span class="nc" id="L143">        Volley.newRequestQueue(GiveReviewActivity.this).add(request);</span>
+<span class="nc" id="L144">    }</span>
+
+    private void setupStandardSpinner() {
+        // Options for the standards spinner
+<span class="nc" id="L148">        String[] standards = {&quot;Below Standards&quot;, &quot;Meets Standards&quot;, &quot;Above Standards&quot;};</span>
+
+        // Set up the spinner adapter
+<span class="nc" id="L151">        ArrayAdapter&lt;String&gt; adapter = new ArrayAdapter&lt;&gt;(this,</span>
+                android.R.layout.simple_spinner_item, standards);
+<span class="nc" id="L153">        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);</span>
+<span class="nc" id="L154">        standardSpinner.setAdapter(adapter);</span>
+
+        // Set up the spinner item selection listener
+<span class="nc" id="L157">        standardSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {</span>
+            @Override
+            public void onItemSelected(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+<span class="nc" id="L160">                selectedStandard = standards[position]; // Store the selected standard</span>
+<span class="nc" id="L161">            }</span>
+
+            @Override
+            public void onNothingSelected(AdapterView&lt;?&gt; parent) {
+<span class="nc" id="L165">                selectedStandard = null; // Reset if nothing is selected</span>
+<span class="nc" id="L166">            }</span>
+        });
+<span class="nc" id="L168">    }</span>
+
+    // Method to submit the review
+    private void submitReview() {
+        // Retrieve and validate review text
+<span class="nc" id="L173">        String reviewText = reviewEditText.getText().toString().trim();</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (reviewText.isEmpty()) {</span>
+<span class="nc" id="L175">            Toast.makeText(this, &quot;Please enter a review description&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L176">            return;</span>
+        }
+
+        // Ensure a standard is selected
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (selectedStandard == null) {</span>
+<span class="nc" id="L181">            Toast.makeText(this, &quot;Please select a standard&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L182">            return;</span>
+        }
+
+        // Prepare the review data JSON object
+<span class="nc" id="L186">        JSONObject reviewData = new JSONObject();</span>
+        try {
+            // Include required information in the request payload
+<span class="nc" id="L189">            reviewData.put(&quot;reviewer&quot;, loggedInUsername);</span>
+<span class="nc" id="L190">            reviewData.put(&quot;employeeId&quot;, selectedEmployeeId);</span>
+<span class="nc" id="L191">            reviewData.put(&quot;standards&quot;, selectedStandard);</span>
+<span class="nc" id="L192">            reviewData.put(&quot;description&quot;, reviewText);</span>
+
+            // API endpoint URL for submitting the review
+<span class="nc" id="L195">            String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/performance-reviews/create&quot;;</span>
+
+            // Create a POST request to send the review data
+<span class="nc" id="L198">            JsonObjectRequest submitRequest = new JsonObjectRequest(Request.Method.POST, url, reviewData,</span>
+<span class="nc" id="L199">                    new Response.Listener&lt;JSONObject&gt;() {</span>
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            // Display a success message and close the activity
+<span class="nc" id="L203">                            Toast.makeText(GiveReviewActivity.this, &quot;Review submitted successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L204">                            finish();</span>
+<span class="nc" id="L205">                        }</span>
+                    },
+<span class="nc" id="L207">                    new Response.ErrorListener() {</span>
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // Handle errors, display an error message
+<span class="nc" id="L211">                            Toast.makeText(GiveReviewActivity.this, &quot;Failed to submit review&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L212">                            Log.e(&quot;SubmitReviewError&quot;, &quot;Error occurred while submitting the review&quot;, error);</span>
+<span class="nc" id="L213">                        }</span>
+                    });
+
+            // Add the request to the Volley request queue
+<span class="nc" id="L217">            Volley.newRequestQueue(GiveReviewActivity.this).add(submitRequest);</span>
+
+<span class="nc" id="L219">        } catch (JSONException e) {</span>
+            // Handle JSON construction errors
+<span class="nc" id="L221">            Log.e(&quot;JSONError&quot;, &quot;Failed to prepare review data&quot;, e);</span>
+<span class="nc" id="L222">            Toast.makeText(this, &quot;Error preparing review data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L223">        }</span>
+<span class="nc" id="L224">    }</span>
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

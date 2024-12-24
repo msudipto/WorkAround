@@ -1,0 +1,128 @@
+/* General Body Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #2e2e2e;
+    color: #eaeaea;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Wrapper Styling */
+#wrapper {
+    width: 80%;
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+    background-color: #3f3f3f;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    color: #f2791d;
+    margin-bottom: 5px;
+}
+
+header p {
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    color: #cccccc;
+}
+
+/* Chat Container */
+#chat-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Connection Panel */
+#connection-panel {
+    margin-bottom: 20px;
+}
+
+#connection-panel select,
+#connection-panel input {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #444;
+    border-radius: 4px;
+}
+
+#connection-panel input {
+    width: 200px;
+}
+
+.btn {
+    color: #fff;
+    background-color: #f2791d;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #ffb15e;
+}
+
+.send-btn {
+    background-color: #4CAF50;
+}
+
+.send-btn:hover {
+    background-color: #45a049;
+}
+
+.command-btn {
+    background-color: #1e90ff;
+}
+
+.command-btn:hover {
+    background-color: #1c86ee;
+}
+
+/* Chat Panel */
+#chat-panel {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#log {
+    width: 100%;
+    height: 200px;
+    background-color: #1f1f1f;
+    color: #eaeaea;
+    border: 1px solid #444;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    resize: none;
+}
+
+#msg {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+#command-buttons {
+    margin-top: 10px;
+}
+
+footer {
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: #888888;
+}

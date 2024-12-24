@@ -1,0 +1,233 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TimeWorkedController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: TimeWorkedController (coms309.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TimeWorkedController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (5/20)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.controller;
+&nbsp;
+&nbsp;import coms309.entity.UserProfile;
+&nbsp;import coms309.service.UserService;
+&nbsp;import coms309.exception.ResourceNotFoundException;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;
+&nbsp;// OpenAPI 3 annotations
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller class for handling time worked related API endpoints.
+&nbsp; */
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/timeWorked&quot;)
+&nbsp;@Tag(name = &quot;Time Worked Management&quot;, description = &quot;Operations for managing user time worked data&quot;)
+<b class="fc">&nbsp;public class TimeWorkedController {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger logger = LoggerFactory.getLogger(TimeWorkedController.class);</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserService userService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get user by ID and return timeWorked along with other details.
+&nbsp;     *
+&nbsp;     * @param id the user ID
+&nbsp;     * @return the user profile with time worked
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get user by ID and return timeWorked&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved user profile&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;UserProfile&gt; getTimeWorkedById(
+&nbsp;            @Parameter(description = &quot;ID of the user to retrieve&quot;, required = true)
+&nbsp;            @PathVariable Long id) {
+<b class="fc">&nbsp;        logger.info(&quot;Fetching user with id: {}&quot;, id);</b>
+<b class="fc">&nbsp;        UserProfile user = userService.getUserById(id).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;User not found&quot;));</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Update time worked for a user.
+&nbsp;     *
+&nbsp;     * @param id the user ID
+&nbsp;     * @param userDetails the user profile details to update
+&nbsp;     * @return the updated user profile
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Update timeWorked for a user&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully updated user profile&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid user details&quot;)
+&nbsp;    })
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;UserProfile&gt; updateTimeWorked(
+&nbsp;            @Parameter(description = &quot;ID of the user to update&quot;, required = true)
+&nbsp;            @PathVariable Long id,
+&nbsp;            @Valid @RequestBody UserProfile userDetails) {
+<b class="nc">&nbsp;        logger.info(&quot;Updating timeWorked for user with id: {}&quot;, id);</b>
+<b class="nc">&nbsp;        UserProfile updatedUser = userService.updateUser(id, userDetails);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(updatedUser);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Submit user&#39;s time for the week.
+&nbsp;     *
+&nbsp;     * @param user the user profile with time worked for the week
+&nbsp;     * @return a response message indicating success or failure
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Submit time for the week&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully submitted time for the week&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid time entry&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/timeweek&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; submitTimeForWeek(@Valid @RequestBody UserProfile user) {
+<b class="nc">&nbsp;        logger.info(&quot;Submitting time for week for user with id: {}&quot;, user.getUserId());</b>
+<b class="nc">&nbsp;        if (user.getTimeWorked() &lt; 0 || user.getTimeWorked() &gt; 168) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Invalid time entry. Time should be between 0 and 168 hours.&quot;);</b>
+&nbsp;        }
+&nbsp;        // Map DTO to entity and call the service
+<b class="nc">&nbsp;        boolean result = userService.submitTimeForWeek(user);</b>
+<b class="nc">&nbsp;        if (!result) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Failed to submit time for the week.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(&quot;Time for the week submitted successfully.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Unsubmit user&#39;s time for the week if they made a mistake.
+&nbsp;     *
+&nbsp;     * @param user the user profile to unsubmit time for the week
+&nbsp;     * @return a response message indicating success or failure
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Unsubmit time for the week&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully unsubmited time for the week&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Failed to unsubmit time for the week&quot;)
+&nbsp;    })
+&nbsp;    @DeleteMapping(&quot;/unsubmit&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; unsubmitTimeForWeek(@Valid @RequestBody UserProfile user) {
+<b class="nc">&nbsp;        logger.info(&quot;Unsubmitting time for week for user with id: {}&quot;, user.getUserId());</b>
+<b class="nc">&nbsp;        boolean result = userService.unsubmitTimeForWeek(user);</b>
+<b class="nc">&nbsp;        if (!result) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Failed to unsubmit time for the week.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(&quot;Time for the week unsubmited successfully.&quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 23:25</div>
+</div>
+</body>
+</html>

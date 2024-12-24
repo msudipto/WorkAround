@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div taskId="wrapper">
+    <h1>WebSocket Chat</h1>
+    <div taskId="connection-section">
+        <input type="text" taskId="wsserver" placeholder="WebSocket URL" value="ws://coms-3090-046.class.las.iastate.edu:8080/chat/" />
+        <input type="text" taskId="username" placeholder="Username" />
+        <select taskId="chatType">
+            <option value="individual">Individual Chat</option>
+            <option value="group">Group Chat</option>
+        </select>
+        <button class="button" type="button" onclick="connect();">Connect</button>
+    </div>
+    <div taskId="chat-section">
+        <textarea taskId="log" rows="15" cols="80" readonly></textarea>
+        <div taskId="message-input">
+            <input type="text" taskId="msg" placeholder="Type your message here..." />
+            <input type="file" taskId="imageUpload" accept="image/*">
+            <button class="button" type="button" onclick="send();">Send</button>
+            <button class="button" type="button" onclick="sendImage();">Send Image</button>
+        </div>
+    </div>
+</div>
+<script src="websocket.js"></script>
+</body>
+</html>

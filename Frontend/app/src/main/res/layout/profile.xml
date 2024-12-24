@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF0E0"
+    android:orientation="vertical"
+    tools:context=".profileActivity">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFA500"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:title="Profile"
+        android:titleTextColor="#FFFFFF" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- username title -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="#FFFFFF"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Username:"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:visibility="visible">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/usernamEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                    </EditText>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <!-- Full name info -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="#FFFFFF"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Full Name:"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/fullName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:visibility="visible">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/fullNameEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                    </EditText>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <!-- Email -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="#FFFFFF"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Email:"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:visibility="visible">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/emailEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                    </EditText>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Pay rate Title -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="#FFFFFF"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Pay Rate:"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/payrate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:visibility="visible">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/payRateEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                    </EditText>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Job Title -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="#FFFFFF"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Job Title:"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/jobTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:visibility="visible">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/jobTitleEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                    </EditText>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- user type Title -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="#FFFFFF"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="User Type:"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/userType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:visibility="visible">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/userTypeEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                    </EditText>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Department -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="#FFFFFF"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Department:"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/department"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:visibility="visible">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/departmentEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                    </EditText>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Date of Hire -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="#FFFFFF"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Date of Hire:"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/datOfHire"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:visibility="visible">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/dateOfHireEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                    </EditText>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Button to Change Information -->
+            <Button
+                android:id="@+id/changeInfoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFA500"
+                android:text="Change Information"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="15dp"/>
+        </LinearLayout>
+    </ScrollView>
+</androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+
+

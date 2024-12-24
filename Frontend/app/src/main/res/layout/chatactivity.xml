@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Toolbar with Back Button and Chat Title -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/chat_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFA500"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:elevation="4dp">
+
+        <TextView
+            android:id="@+id/chatTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chat Title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white">
+        </TextView>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- RecyclerView for Displaying Chat Messages -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_messages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical">
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/plusimage"
+        android:contentDescription="Send Image"
+        android:layout_marginLeft="325dp"/>
+
+    <!-- Input Area for Typing and Sending Messages -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/messageInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Type a message"
+            android:inputType="text">
+        </EditText>
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send"
+            android:backgroundTint="#FFA500">
+        </Button>
+    </LinearLayout>
+</LinearLayout>

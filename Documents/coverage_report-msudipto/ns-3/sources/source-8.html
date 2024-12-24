@@ -1,0 +1,208 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TaskDTO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.dto</a>
+</div>
+
+<h1>Coverage Summary for Class: TaskDTO (coms309.dto)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TaskDTO</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.2%
+  </span>
+  <span class="absValue">
+    (13/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    56.5%
+  </span>
+  <span class="absValue">
+    (13/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.dto;
+&nbsp;
+&nbsp;import coms309.entity.Projects;
+&nbsp;import jakarta.validation.constraints.Max;
+&nbsp;import jakarta.validation.constraints.Min;
+&nbsp;import jakarta.validation.constraints.NotBlank;
+&nbsp;import jakarta.validation.constraints.Size;
+&nbsp;import jakarta.validation.constraints.NotNull;
+&nbsp;
+&nbsp;public class TaskDTO {
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Task name is required&quot;)
+&nbsp;    @Size(max = 100, message = &quot;Task name must not exceed 100 characters&quot;)
+&nbsp;    private String name;
+&nbsp;
+&nbsp;    @Size(max = 500, message = &quot;Description must not exceed 500 characters&quot;)
+&nbsp;    private String description;
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Status is required&quot;)
+&nbsp;    private String status;  // e.g., &quot;Assigned&quot;, &quot;In Progress&quot;, &quot;Completed&quot;
+&nbsp;
+&nbsp;    @Min(value = 0, message = &quot;Progress must be at least 0%&quot;)
+&nbsp;    @Max(value = 100, message = &quot;Progress must not exceed 100%&quot;)
+&nbsp;    private Integer progress;  // Represented as percentage (0-100)
+&nbsp;
+&nbsp;    @NotNull(message = &quot;Project ID is required&quot;)
+&nbsp;    private Long projectId;
+&nbsp;
+&nbsp;    @NotNull(message = &quot;Project ID is required&quot;)
+&nbsp;    private String employeeAssignedTo;
+&nbsp;
+&nbsp;    @NotNull(message = &quot;Project ID is required&quot;)
+&nbsp;    private String employerAssignedTo;
+&nbsp;
+&nbsp;    // Constructors
+<b class="fc">&nbsp;    public TaskDTO() {}</b>
+&nbsp;
+<b class="nc">&nbsp;    public TaskDTO(String name, String description, String status, Integer progress, Projects projectId, String EmployeeAssignedTo, String EmployerAssignedTo) {</b>
+<b class="nc">&nbsp;        this.name = name;</b>
+<b class="nc">&nbsp;        this.description = description;</b>
+<b class="nc">&nbsp;        this.status = status;</b>
+<b class="nc">&nbsp;        this.progress = progress;</b>
+<b class="nc">&nbsp;        this.projectId = projectId.getProjectId();</b>
+<b class="nc">&nbsp;        this.employeeAssignedTo = EmployeeAssignedTo;</b>
+<b class="nc">&nbsp;        this.employerAssignedTo = EmployerAssignedTo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Getters and Setters
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setName(String name) {
+<b class="fc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getDescription() {
+<b class="fc">&nbsp;        return description;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDescription(String description) {
+<b class="fc">&nbsp;        this.description = description;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStatus() {
+<b class="nc">&nbsp;        return status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStatus(String status) {
+<b class="fc">&nbsp;        this.status = status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getProgress() {
+<b class="nc">&nbsp;        return progress;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setProgress(int progress) {
+<b class="fc">&nbsp;        this.progress = progress;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getProjectId() {
+<b class="fc">&nbsp;        return projectId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setProjectId(Long projectId) {
+<b class="fc">&nbsp;        this.projectId = projectId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEmployeeAssignedTo() {
+<b class="fc">&nbsp;        return employeeAssignedTo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEmployeeAssignedTo(String employeeAssignedTo) {
+<b class="fc">&nbsp;        this.employeeAssignedTo = employeeAssignedTo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEmployerAssignedTo() {
+<b class="fc">&nbsp;        return employerAssignedTo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEmployerAssignedTo(String employerAssignedTo) {
+<b class="fc">&nbsp;        this.employerAssignedTo = employerAssignedTo;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 23:25</div>
+</div>
+</body>
+</html>

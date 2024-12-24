@@ -1,0 +1,112 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ChatRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ChatRepository (coms309.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ChatRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.repository;
+&nbsp;
+&nbsp;import coms309.entity.Chat;
+&nbsp;import org.jetbrains.annotations.NotNull;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface ChatRepository extends JpaRepository&lt;Chat, Long&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find all messages sent by a specific user.
+&nbsp;     * @param userName the username to filter messages by
+&nbsp;     * @return a list of messages sent by the given user
+&nbsp;     **/
+&nbsp;    List&lt;Chat&gt; findByUserName(String userName);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find the most recent messages, limited by a given count.
+&nbsp;     * @param limit the number of recent messages to retrieve
+&nbsp;     * @return a list of recent messages, limited by the specified count
+&nbsp;     **/
+&nbsp;    @Query(value = &quot;SELECT m FROM Chat m ORDER BY m.sent DESC&quot;)
+&nbsp;    List&lt;Chat&gt; findRecentMessages(@Param(&quot;limit&quot;) int limit);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find a message by ID.
+&nbsp;     * @param id the ID of the message
+&nbsp;     * @return an optional containing the found message, or empty if not found
+&nbsp;     **/
+&nbsp;    @NotNull Optional&lt;Chat&gt; findById(@NotNull Long id);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find all chat messages associated with a specific image ID.
+&nbsp;     * @param imageId the ID of the image
+&nbsp;     * @return a list of chat messages associated with the given image
+&nbsp;     **/
+&nbsp;    List&lt;Chat&gt; findByImage_Id(@NotNull Long imageId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 23:25</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,303 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProjectController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: ProjectController (coms309.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProjectController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10%
+  </span>
+  <span class="absValue">
+    (1/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    30.8%
+  </span>
+  <span class="absValue">
+    (4/13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.controller;
+&nbsp;
+&nbsp;import coms309.dto.NotificationRequestDTO;
+&nbsp;import coms309.dto.ProjectDTO;
+&nbsp;import coms309.entity.Notification;
+&nbsp;import coms309.entity.Projects;
+&nbsp;import coms309.service.NotificationService;
+&nbsp;import coms309.service.UserService;
+&nbsp;import coms309.service.ProjectService;
+&nbsp;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;// OpenAPI 3 annotations
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller class for handling project-related API endpoints.
+&nbsp; */
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/project&quot;)
+&nbsp;@Tag(name = &quot;Project Management&quot;, description = &quot;API endpoints for project and notification management&quot;)
+&nbsp;public class ProjectController {
+&nbsp;
+&nbsp;    private final NotificationService notificationService;
+&nbsp;    private final UserService userService;
+&nbsp;    private final ProjectService projectService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new ProjectController with the given services.
+&nbsp;     *
+&nbsp;     * @param notificationService the notification service
+&nbsp;     * @param userService         the user service
+&nbsp;     * @param projectService      the project service
+&nbsp;     */
+<b class="fc">&nbsp;    public ProjectController(NotificationService notificationService, UserService userService, ProjectService projectService) {</b>
+<b class="fc">&nbsp;        this.notificationService = notificationService;</b>
+<b class="fc">&nbsp;        this.userService = userService;</b>
+<b class="fc">&nbsp;        this.projectService = projectService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all projects.
+&nbsp;     *
+&nbsp;     * @return a list of all projects
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve all projects&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved all projects&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/allproject&quot;)
+&nbsp;    public List&lt;Projects&gt; getAllProjects() {
+<b class="nc">&nbsp;        return projectService.getAllProjects();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a project by its ID.
+&nbsp;     *
+&nbsp;     * @param id the project ID
+&nbsp;     * @return the project with the specified ID
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve a project by its ID&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved project&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Project not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/projectId/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;Projects&gt; getProjectById(
+&nbsp;            @Parameter(description = &quot;ID of the project to retrieve&quot;, required = true)
+&nbsp;            @PathVariable Long id) {
+<b class="nc">&nbsp;        return projectService.getProjectById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new project.
+&nbsp;     *
+&nbsp;     * @param projectDTO the project data transfer object
+&nbsp;     * @return a response entity with a success message
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Create a new project&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Project created successfully&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid project data&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/create&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; createProject(
+&nbsp;            @Valid @RequestBody ProjectDTO projectDTO) {
+<b class="nc">&nbsp;        return projectService.createProject(projectDTO);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;    @PutMapping(&quot;/update/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; updateProject(@PathVariable Long id, @Valid @RequestBody ProjectDTO projectDTO) {
+&nbsp;        return projectService.updateProject(id, projectDTO);
+&nbsp;    }
+&nbsp;    */
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends notifications to employees associated with a project.
+&nbsp;     *
+&nbsp;     * @param id the project ID
+&nbsp;     * @return a response entity with a success message
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Send notifications to employees for a project&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Notifications sent successfully&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Project not found&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/notify/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; notifyEmployees(
+&nbsp;            @Parameter(description = &quot;ID of the project to notify employees&quot;, required = true)
+&nbsp;            @PathVariable Long id) {
+<b class="nc">&nbsp;        return notificationService.notifyEmployees(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new notification.
+&nbsp;     *
+&nbsp;     * @param notificationRequestDTO the notification request data transfer object
+&nbsp;     * @return a response entity with a success message
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Create a new notification&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Notification created successfully&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid notification data&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/notifications/create&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; createNotification(
+&nbsp;            @Valid @RequestBody NotificationRequestDTO notificationRequestDTO) {
+<b class="nc">&nbsp;        return notificationService.createNotification(notificationRequestDTO);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the next shift for a user.
+&nbsp;     *
+&nbsp;     * @param id the user ID
+&nbsp;     * @return a response entity containing the next shift information
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve the next shift for a user&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved next shift&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/user/{id}/next-shift&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; getNextShift(
+&nbsp;            @Parameter(description = &quot;ID of the user to retrieve next shift&quot;, required = true)
+&nbsp;            @PathVariable Long id) {
+<b class="nc">&nbsp;        return userService.getNextShift(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the total time worked by a user.
+&nbsp;     *
+&nbsp;     * @param id the user ID
+&nbsp;     * @return a response entity containing the time worked
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve total time worked by a user&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved time worked&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/user/{id}/time-worked&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; getTimeWorked(
+&nbsp;            @Parameter(description = &quot;ID of the user to retrieve time worked&quot;, required = true)
+&nbsp;            @PathVariable Long id) {
+<b class="nc">&nbsp;        return userService.getTimeWorked(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all notifications.
+&nbsp;     *
+&nbsp;     * @return a response entity containing a list of all notifications
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve all notifications&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved all notifications&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/notifications&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;Notification&gt;&gt; getAllNotifications() {
+<b class="nc">&nbsp;        return notificationService.getAllNotifications();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes a notification by its ID.
+&nbsp;     *
+&nbsp;     * @param id the notification ID
+&nbsp;     * @return a response entity with a success message
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Delete a notification by its ID&quot;, responses = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully deleted notification&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Notification not found&quot;)
+&nbsp;    })
+&nbsp;    @DeleteMapping(&quot;/notifications/delete/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; deleteNotification(
+&nbsp;            @Parameter(description = &quot;ID of the notification to delete&quot;, required = true)
+&nbsp;            @PathVariable Long id) {
+<b class="nc">&nbsp;        return notificationService.deleteNotification(id);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 23:25</div>
+</div>
+</body>
+</html>

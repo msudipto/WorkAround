@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>createTasksActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">createTasksActivity.java</span></div><h1>createTasksActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+<span class="nc" id="L26">public class createTasksActivity extends AppCompatActivity {</span>
+
+    private EditText taskNameText;
+    private EditText taskDescriptionText;
+    private Spinner priorityLevelSpinner;
+    private EditText employeeAssignedText;
+    private Button saveButton;
+
+    // Replace with your actual API URL
+    private static final String API_URL = &quot;http://coms-3090-046.class.las.iastate.edu:8080/tasks/create&quot;;
+
+    @SuppressLint(&quot;MissingInflatedId&quot;)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L40">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L41">        setContentView(R.layout.createtasks);</span>
+
+<span class="nc" id="L43">        taskNameText = findViewById(R.id.taskName);</span>
+<span class="nc" id="L44">        taskDescriptionText = findViewById(R.id.taskDescription);</span>
+<span class="nc" id="L45">        priorityLevelSpinner = findViewById(R.id.priorityLevel);</span>
+<span class="nc" id="L46">        employeeAssignedText = findViewById(R.id.employeeAssigned);</span>
+<span class="nc" id="L47">        saveButton = findViewById(R.id.saveButton);</span>
+
+<span class="nc" id="L49">        Toolbar toolbar = findViewById(R.id.toolBarCreate);</span>
+<span class="nc" id="L50">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L51">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L52">        getSupportActionBar().setTitle(&quot;Create Tasks&quot;);</span>
+
+        // Priority level dropdown
+<span class="nc" id="L55">        ArrayAdapter&lt;CharSequence&gt; adapter = ArrayAdapter.createFromResource(this, R.array.priority_levels, android.R.layout.simple_spinner_item);</span>
+<span class="nc" id="L56">        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);</span>
+<span class="nc" id="L57">        priorityLevelSpinner.setAdapter(adapter);</span>
+
+<span class="nc" id="L59">        saveButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L62">                saveTask();</span>
+<span class="nc" id="L63">            }</span>
+        });
+<span class="nc" id="L65">    }</span>
+
+    private void saveTask() {
+        // Retrieve user input
+<span class="nc" id="L69">        String taskName = taskNameText.getText().toString();</span>
+<span class="nc" id="L70">        String taskDescription = taskDescriptionText.getText().toString();</span>
+<span class="nc" id="L71">        String priorityLevel = priorityLevelSpinner.getSelectedItem().toString();</span>
+<span class="nc" id="L72">        String employeeAssigned = employeeAssignedText.getText().toString();</span>
+
+        // Get employerAssignedTo (username from SharedPreferences)
+<span class="nc" id="L75">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L76">        String employerAssignedTo = sharedPreferences.getString(&quot;username&quot;, null);</span>
+
+<span class="nc bnc" id="L78" title="All 8 branches missed.">        if (taskName.isEmpty() || taskDescription.isEmpty() || employeeAssigned.isEmpty() || employerAssignedTo == null) {</span>
+<span class="nc" id="L79">            Toast.makeText(this, &quot;Please fill all the fields&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L80">            return;</span>
+        }
+
+        // Default values
+<span class="nc" id="L84">        String status = &quot;Assigned&quot;;  // Default status for new tasks</span>
+<span class="nc" id="L85">        int progress = 0;  // Progress starts at 0%</span>
+
+        // Assume the project ID is passed or selected from somewhere.
+        // For now, we're assuming it's hardcoded to 101.
+<span class="nc" id="L89">        long projectId = 101;  // Replace with the actual project ID</span>
+
+        // Prepare the JSON object
+<span class="nc" id="L92">        JSONObject taskData = new JSONObject();</span>
+        try {
+<span class="nc" id="L94">            taskData.put(&quot;name&quot;, taskName);</span>
+<span class="nc" id="L95">            taskData.put(&quot;description&quot;, taskDescription);</span>
+<span class="nc" id="L96">            taskData.put(&quot;status&quot;, status);  // Status can be dynamic based on UI</span>
+<span class="nc" id="L97">            taskData.put(&quot;progress&quot;, progress);  // Default progress</span>
+<span class="nc" id="L98">            taskData.put(&quot;projectId&quot;, projectId);  // Ensure projectId is set correctly</span>
+<span class="nc" id="L99">            taskData.put(&quot;employeeAssignedTo&quot;, employeeAssigned);  // Get the employee's username</span>
+<span class="nc" id="L100">            taskData.put(&quot;employerAssignedTo&quot;, employerAssignedTo);  // Get employer from SharedPreferences</span>
+<span class="nc" id="L101">        } catch (JSONException e) {</span>
+<span class="nc" id="L102">            e.printStackTrace();</span>
+<span class="nc" id="L103">            Toast.makeText(this, &quot;Failed to create task data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L104">            return;</span>
+<span class="nc" id="L105">        }</span>
+
+        // Send the request via Volley
+<span class="nc" id="L108">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(</span>
+                Request.Method.POST,
+                API_URL,
+                taskData,
+<span class="nc" id="L112">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Success creating task
+<span class="nc" id="L116">                        Toast.makeText(createTasksActivity.this, &quot;Task created successfully!&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L117">                        setResult(RESULT_OK);</span>
+<span class="nc" id="L118">                        finish();</span>
+<span class="nc" id="L119">                    }</span>
+                },
+<span class="nc" id="L121">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Error creating task
+<span class="nc" id="L125">                        Toast.makeText(createTasksActivity.this, &quot;Error creating task: &quot; + error.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L126">                    }</span>
+                }
+        );
+<span class="nc" id="L129">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="nc" id="L130">    }</span>
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+            // Redirect based on permissions (Admin, Employer, etc.)
+<span class="nc" id="L136">            Intent intent = new Intent(createTasksActivity.this, projectEmployerActivity.class);</span>
+<span class="nc" id="L137">            startActivity(intent);</span>
+<span class="nc" id="L138">            return true;</span>
+        }
+<span class="nc" id="L140">        return super.onOptionsItemSelected(item);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>taskEmployeeActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">taskEmployeeActivity.java</span></div><h1>taskEmployeeActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ * This class shows an employee what tasks they are assigned to, and lets the employee modify them
+ */
+<span class="nc" id="L33">public class taskEmployeeActivity extends AppCompatActivity {</span>
+
+    private LinearLayout taskListLayout;
+
+    /**
+     * Create the class and map all buttons to the XML
+     * @param savedInstanceState
+     */
+    @SuppressLint(&quot;MissingInflatedId&quot;)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L44">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L45">        setContentView(R.layout.taskemployee);</span>
+
+<span class="nc" id="L47">        taskListLayout = findViewById(R.id.tasklayoutEmployee);</span>
+
+<span class="nc" id="L49">        Toolbar toolbar = findViewById(R.id.toolbarEmployee);</span>
+<span class="nc" id="L50">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L51">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L52">        getSupportActionBar().setTitle(&quot;Tasks&quot;);</span>
+
+        // Fetch all tasks from the backend and display them
+<span class="nc" id="L55">        fetchAllTasks();</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * GET all tasks assigned to the currently logged in user
+     */
+    private void fetchAllTasks() {
+<span class="nc" id="L62">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/tasks&quot;;</span>
+
+<span class="nc" id="L64">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L65">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            // Clear the layout to avoid duplicating task cards
+<span class="nc" id="L70">                            taskListLayout.removeAllViews();</span>
+
+                            // Loop through each task in the response
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L74">                                JSONObject taskObject = response.getJSONObject(i);</span>
+
+                                // Extract fields including the task ID
+<span class="nc" id="L77">                                final long taskId = taskObject.optLong(&quot;id&quot;); // Get the task ID</span>
+<span class="nc" id="L78">                                String taskName = taskObject.optString(&quot;name&quot;, &quot;Unnamed Task&quot;);</span>
+<span class="nc" id="L79">                                String taskDescription = taskObject.optString(&quot;description&quot;, &quot;No description available.&quot;);</span>
+<span class="nc" id="L80">                                String status = taskObject.optString(&quot;status&quot;, &quot;No status available.&quot;);</span>
+<span class="nc" id="L81">                                String employeeAssignedTo = taskObject.optString(&quot;employeeAssignedTo&quot;, &quot;&quot;);</span>
+<span class="nc" id="L82">                                String employerAssignedTo = taskObject.optString(&quot;employerAssignedTo&quot;, &quot;&quot;);</span>
+<span class="nc" id="L83">                                String createdAt = taskObject.optString(&quot;createdAt&quot;, &quot;&quot;);</span>
+<span class="nc" id="L84">                                String updatedAt = taskObject.optString(&quot;updatedAt&quot;, &quot;&quot;);</span>
+<span class="nc" id="L85">                                int progress = taskObject.optInt(&quot;progress&quot;, 0);</span>
+
+                                // Only show tasks assigned to the current user
+<span class="nc" id="L88">                                SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L89">                                String currentUser = sharedPreferences.getString(&quot;username&quot;, null);</span>
+<span class="nc bnc" id="L90" title="All 4 branches missed.">                                if (employeeAssignedTo != null &amp;&amp; !employeeAssignedTo.equals(currentUser)) {</span>
+<span class="nc" id="L91">                                    continue;  // Skip tasks not assigned to the current user</span>
+                                }
+
+                                // Create a new CardView for this task
+<span class="nc" id="L95">                                CardView taskCard = new CardView(taskEmployeeActivity.this);</span>
+<span class="nc" id="L96">                                LinearLayout.LayoutParams cardLayoutParams = new LinearLayout.LayoutParams(</span>
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
+<span class="nc" id="L100">                                cardLayoutParams.setMargins(16, 16, 16, 16);</span>
+<span class="nc" id="L101">                                taskCard.setLayoutParams(cardLayoutParams);</span>
+<span class="nc" id="L102">                                taskCard.setCardBackgroundColor(getResources().getColor(R.color.cardBackground));</span>
+<span class="nc" id="L103">                                taskCard.setRadius(16);</span>
+<span class="nc" id="L104">                                taskCard.setCardElevation(8);</span>
+
+                                // Set the task ID as a tag to retrieve later
+<span class="nc" id="L107">                                taskCard.setTag(taskId); // Set the task ID on the card as a tag</span>
+
+                                // Create the layout for the CardView content
+<span class="nc" id="L110">                                LinearLayout taskLayout = new LinearLayout(taskEmployeeActivity.this);</span>
+<span class="nc" id="L111">                                taskLayout.setOrientation(LinearLayout.VERTICAL);</span>
+<span class="nc" id="L112">                                taskLayout.setPadding(24, 24, 24, 24);</span>
+
+                                // Add Task Name
+<span class="nc" id="L115">                                TextView taskNameView = new TextView(taskEmployeeActivity.this);</span>
+<span class="nc" id="L116">                                taskNameView.setText(&quot;Task: &quot; + taskName);</span>
+<span class="nc" id="L117">                                taskNameView.setTextSize(18);</span>
+<span class="nc" id="L118">                                taskNameView.setTextColor(getResources().getColor(R.color.black));</span>
+<span class="nc" id="L119">                                taskLayout.addView(taskNameView);</span>
+
+                                // Add Task Description
+<span class="nc" id="L122">                                TextView taskDescriptionView = new TextView(taskEmployeeActivity.this);</span>
+<span class="nc" id="L123">                                taskDescriptionView.setText(&quot;Description: &quot; + taskDescription);</span>
+<span class="nc" id="L124">                                taskDescriptionView.setTextColor(getResources().getColor(R.color.black));</span>
+<span class="nc" id="L125">                                taskDescriptionView.setPadding(0, 8, 0, 8);</span>
+<span class="nc" id="L126">                                taskLayout.addView(taskDescriptionView);</span>
+
+                                // Status Layout
+<span class="nc" id="L129">                                FrameLayout statusLayout = new FrameLayout(taskEmployeeActivity.this);</span>
+<span class="nc" id="L130">                                LinearLayout.LayoutParams statusLayoutParams = new LinearLayout.LayoutParams(</span>
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
+<span class="nc" id="L134">                                statusLayoutParams.setMargins(0, 16, 0, 0);</span>
+<span class="nc" id="L135">                                statusLayout.setLayoutParams(statusLayoutParams);</span>
+
+                                // Status Box Color
+<span class="nc" id="L138">                                TextView colorBox = new TextView(taskEmployeeActivity.this);</span>
+<span class="nc" id="L139">                                LinearLayout.LayoutParams colorBoxLayoutParams = new LinearLayout.LayoutParams(</span>
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
+<span class="nc" id="L143">                                colorBox.setLayoutParams(colorBoxLayoutParams);</span>
+<span class="nc" id="L144">                                colorBox.setPadding(0, 40, 0, 40);</span>
+
+                                // Set background color based on status
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                                if (status.equals(&quot;Completed&quot;)) {</span>
+<span class="nc" id="L148">                                    colorBox.setBackgroundColor(getResources().getColor(R.color.green));</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                                } else if (status.equals(&quot;In Progress&quot;)) {</span>
+<span class="nc" id="L150">                                    colorBox.setBackgroundColor(getResources().getColor(R.color.yellow));</span>
+                                } else {
+<span class="nc" id="L152">                                    colorBox.setBackgroundColor(getResources().getColor(R.color.red));</span>
+                                }
+
+                                // Task Status Text
+<span class="nc" id="L156">                                TextView taskStatusView = new TextView(taskEmployeeActivity.this);</span>
+<span class="nc" id="L157">                                taskStatusView.setText(status);</span>
+<span class="nc" id="L158">                                taskStatusView.setTextColor(getResources().getColor(R.color.white));</span>
+<span class="nc" id="L159">                                taskStatusView.setTextSize(16);</span>
+<span class="nc" id="L160">                                taskStatusView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);</span>
+<span class="nc" id="L161">                                FrameLayout.LayoutParams taskStatusViewParams = new FrameLayout.LayoutParams(</span>
+                                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                                        FrameLayout.LayoutParams.WRAP_CONTENT
+                                );
+<span class="nc" id="L165">                                taskStatusViewParams.gravity = android.view.Gravity.CENTER;</span>
+<span class="nc" id="L166">                                taskStatusView.setLayoutParams(taskStatusViewParams);</span>
+
+                                // Add status elements to layout
+<span class="nc" id="L169">                                statusLayout.addView(colorBox);</span>
+<span class="nc" id="L170">                                statusLayout.addView(taskStatusView);</span>
+<span class="nc" id="L171">                                taskLayout.addView(statusLayout);</span>
+
+                                // Add the task layout to the card
+<span class="nc" id="L174">                                taskCard.addView(taskLayout);</span>
+
+                                // Add the card to the main layout
+<span class="nc" id="L177">                                taskListLayout.addView(taskCard);</span>
+
+                                // Set the click listener to update status when clicked
+<span class="nc" id="L180">                                taskCard.setOnClickListener(new View.OnClickListener() {</span>
+                                    @Override
+                                    public void onClick(View v) {
+                                        // Get the task ID from the card tag
+<span class="nc" id="L184">                                        long taskId = (long) v.getTag();</span>
+<span class="nc" id="L185">                                        String currentStatus = taskStatusView.getText().toString();</span>
+
+                                        // Determine next status in cycle: &quot;Assigned&quot; -&gt; &quot;In Progress&quot; -&gt; &quot;Completed&quot; -&gt; &quot;Assigned&quot;
+<span class="nc" id="L188">                                        String nextStatus = getNextStatus(currentStatus);</span>
+
+                                        // Call the function to update the task status
+<span class="nc" id="L191">                                        updateTaskStatusOnServer(taskId, nextStatus, taskStatusView, colorBox, taskName, taskDescription, progress, createdAt, updatedAt, employeeAssignedTo, employerAssignedTo);</span>
+<span class="nc" id="L192">                                    }</span>
+                                });
+                            }
+<span class="nc" id="L195">                        } catch (JSONException e) {</span>
+<span class="nc" id="L196">                            e.printStackTrace();</span>
+<span class="nc" id="L197">                            Toast.makeText(taskEmployeeActivity.this, &quot;Error fetching tasks&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L198">                        }</span>
+<span class="nc" id="L199">                    }</span>
+                },
+<span class="nc" id="L201">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L204">                        Log.e(&quot;Volley Error&quot;, &quot;Error fetching tasks: &quot; + error.getMessage());</span>
+<span class="nc" id="L205">                        Toast.makeText(taskEmployeeActivity.this, &quot;Error fetching tasks: &quot; + error.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L206">                    }</span>
+                });
+
+        // Add the request to the RequestQueue
+<span class="nc" id="L210">        Volley.newRequestQueue(this).add(jsonArrayRequest);</span>
+<span class="nc" id="L211">    }</span>
+
+    /**
+     * Get the next status of the project.
+     * Order is Assigned -&gt; In Progress -&gt; Completed -&gt; Assigned -&gt; ...
+     * @param currentStatus
+     * @return
+     */
+    private String getNextStatus(String currentStatus) {
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        if (&quot;Assigned&quot;.equals(currentStatus)) {</span>
+<span class="nc" id="L221">            return &quot;In Progress&quot;;</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        } else if (&quot;In Progress&quot;.equals(currentStatus)) {</span>
+<span class="nc" id="L223">            return &quot;Completed&quot;;</span>
+        } else {
+<span class="nc" id="L225">            return &quot;Assigned&quot;; // Cycle back to &quot;Assigned&quot;</span>
+        }
+    }
+
+    /**
+     * Update the task object on the server using PUT requests
+     * @param taskId
+     * @param newStatus
+     * @param taskStatusView
+     * @param colorBox
+     * @param taskName
+     * @param taskDescription
+     * @param progress
+     * @param createdAt
+     * @param updatedAt
+     * @param employeeAssignedTo
+     * @param employerAssignedTo
+     */
+    private void updateTaskStatusOnServer(long taskId, String newStatus, TextView taskStatusView, TextView colorBox, String taskName, String taskDescription, int progress, String createdAt, String updatedAt, String employeeAssignedTo, String employerAssignedTo) {
+        // URL to update the task status
+<span class="nc" id="L245">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/tasks/&quot; + taskId;</span>
+
+        // Create the JSON object with updated status and all required fields
+<span class="nc" id="L248">        JSONObject taskData = new JSONObject();</span>
+        try {
+<span class="nc" id="L250">            taskData.put(&quot;id&quot;, taskId);</span>
+<span class="nc" id="L251">            taskData.put(&quot;name&quot;, taskName);</span>
+<span class="nc" id="L252">            taskData.put(&quot;description&quot;, taskDescription);</span>
+<span class="nc" id="L253">            taskData.put(&quot;status&quot;, newStatus);</span>
+<span class="nc" id="L254">            taskData.put(&quot;progress&quot;, progress);</span>
+<span class="nc" id="L255">            taskData.put(&quot;createdAt&quot;, createdAt);</span>
+<span class="nc" id="L256">            taskData.put(&quot;updatedAt&quot;, updatedAt);</span>
+<span class="nc" id="L257">            taskData.put(&quot;employeeAssignedTo&quot;, employeeAssignedTo);</span>
+<span class="nc" id="L258">            taskData.put(&quot;employerAssignedTo&quot;, employerAssignedTo);</span>
+
+            // Create the PUT request to update the task
+<span class="nc" id="L261">            JsonObjectRequest updateRequest = new JsonObjectRequest(</span>
+                    Request.Method.PUT, url, taskData,
+<span class="nc" id="L263">                    new Response.Listener&lt;JSONObject&gt;() {</span>
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            // On success, update the status on the UI
+<span class="nc" id="L267">                            Toast.makeText(taskEmployeeActivity.this, &quot;Task status updated to &quot; + newStatus, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L268">                            taskStatusView.setText(newStatus);</span>
+
+                            // Change color based on new status
+<span class="nc bnc" id="L271" title="All 2 branches missed.">                            if (&quot;Completed&quot;.equals(newStatus)) {</span>
+<span class="nc" id="L272">                                colorBox.setBackgroundColor(getResources().getColor(R.color.green));</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">                            } else if (&quot;In Progress&quot;.equals(newStatus)) {</span>
+<span class="nc" id="L274">                                colorBox.setBackgroundColor(getResources().getColor(R.color.yellow));</span>
+                            } else {
+<span class="nc" id="L276">                                colorBox.setBackgroundColor(getResources().getColor(R.color.red));</span>
+                            }
+<span class="nc" id="L278">                        }</span>
+                    },
+<span class="nc" id="L280">                    new Response.ErrorListener() {</span>
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L283">                            Log.e(&quot;Volley Error&quot;, &quot;Error updating task status: &quot; + error.getMessage());</span>
+<span class="nc" id="L284">                            Toast.makeText(taskEmployeeActivity.this, &quot;Error updating task status: &quot; + error.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L285">                        }</span>
+                    });
+
+            // Add the request to the RequestQueue
+<span class="nc" id="L289">            Volley.newRequestQueue(this).add(updateRequest);</span>
+
+<span class="nc" id="L291">        } catch (JSONException e) {</span>
+<span class="nc" id="L292">            e.printStackTrace();</span>
+<span class="nc" id="L293">            Toast.makeText(taskEmployeeActivity.this, &quot;Error creating task data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L294">        }</span>
+<span class="nc" id="L295">    }</span>
+
+    /**
+     * Close activity when done
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L304" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+<span class="nc" id="L305">            finish(); // Close the activity when back is pressed</span>
+<span class="nc" id="L306">            return true;</span>
+        }
+<span class="nc" id="L308">        return super.onOptionsItemSelected(item);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

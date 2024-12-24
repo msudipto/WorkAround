@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="wrapper">
+    <h1>WebSocket Chat</h1>
+    <div id="connection-section">
+        <input type="text" id="wsserver" placeholder="WebSocket URL" value="ws://localhost:8080/chat/" />
+        <input type="text" id="username" placeholder="Username" />
+        <button class="button" type="button" onclick="connect();">Connect</button>
+    </div>
+    <div id="chat-section">
+        <textarea id="log" rows="15" cols="80" readonly></textarea>
+        <div id="message-input">
+            <input type="text" id="msg" placeholder="Type your message here..." />
+            <button class="button" type="button" onclick="send();">Send</button>
+        </div>
+    </div>
+</div>
+<script src="websocket.js"></script>
+</body>
+</html>

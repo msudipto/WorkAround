@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".payCheckSearchActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF0E0">
+
+
+    <!--Logo-->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:src="@drawable/workaroundlogo">
+    </ImageView>
+
+    <!--White background -->
+    <FrameLayout
+        android:layout_width="350dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="-50dp"
+        android:layout_gravity="center"
+        android:background="@color/white">
+    </FrameLayout>
+
+    <!--username-->
+    <EditText
+        android:id="@+id/usernameInput"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:hint="Username"
+        android:inputType="text"
+        android:layout_gravity="center"
+        android:layout_marginTop="-200dp">
+    </EditText>
+
+    <!--Join Now button-->
+    <Button
+        android:id="@+id/searchUsers"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center"
+        android:text="Search Users"
+        android:backgroundTint="#FFA500">
+    </Button>
+
+    <!--Join Now button-->
+    <Button
+        android:id="@+id/modifyUsers"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:text="Modify Users Pay"
+        android:backgroundTint="#FFA500">
+    </Button>
+
+    <!-- Text to message for no user found -->
+    <TextView
+        android:id="@+id/noUserMessage"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:text=""
+        android:gravity="center"
+        android:textColor="#FF0000">
+    </TextView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

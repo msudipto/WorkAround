@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#FFF0E0"
+    tools:context=".createScheduleActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBarScheduler"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFA500"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextColor="#FFFFFF"
+        tools:ignore="MissingConstraints">
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Priority Level Dropdown -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name:"
+        android:padding="16dp">
+    </TextView>
+
+    <EditText
+        android:id="@+id/nameEntry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter the username of an employee"
+        android:padding="16dp">
+    </EditText>
+
+    <!-- Due Date Field -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date:"
+        android:padding="16dp">
+    </TextView>
+
+    <!-- Date Schedule -->
+    <EditText
+        android:id="@+id/dateScheduled"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter date (e.g., MM/DD/YYYY)"
+        android:padding="16dp"
+        android:focusable="false">
+    </EditText>
+
+    <TextView
+        android:id="@+id/startTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Time"
+        android:padding="16dp">
+    </TextView>
+
+    <TextView
+        android:id="@+id/endTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Time"
+        android:padding="16dp">
+    </TextView>
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_gravity="center"
+        android:padding="16dp"
+        android:backgroundTint="#FFA500">
+    </Button>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

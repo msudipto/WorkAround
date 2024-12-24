@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".joinNowActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF0E0">
+
+
+    <!--Logo-->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:src="@drawable/workaroundlogo">
+    </ImageView>
+
+    <!--White background to surround forgot password-->
+
+    <!--Name-->
+    <FrameLayout
+        android:layout_width="350dp"
+        android:layout_height="450dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-50dp"
+        android:background="@color/white"></FrameLayout>
+
+    <EditText
+        android:id="@+id/enterName"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:hint="Full name"
+        android:inputType="text"
+        android:layout_gravity="center"
+        android:layout_marginTop="-380dp">
+    </EditText>
+
+    <!--email-->
+    <EditText
+        android:id="@+id/emailInput"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:hint="Email"
+        android:inputType="text"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+    </EditText>
+
+    <!--username-->
+    <EditText
+        android:id="@+id/usernameInput"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:hint="Username"
+        android:inputType="text"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:enabled="false">
+    </EditText>
+
+    <!--password-->
+    <EditText
+        android:id="@+id/enterPassword"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:hint="Password"
+        android:inputType="text"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+    </EditText>
+
+    <!--reenter password-->
+    <EditText
+        android:id="@+id/reenterPassword"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:hint="Re-enter Password"
+        android:inputType="text"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+    </EditText>
+
+    <!--Join Now button-->
+    <Button
+        android:id="@+id/joinNow"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center"
+        android:text="Join Now"
+        android:backgroundTint="#FFA500">
+    </Button>
+
+    <!-- back button-->
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="-430dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="50dp"
+        android:text="Back"
+        android:backgroundTint="#4F4F4F">
+    </Button>
+
+    <!--Show Password-->
+    <ImageButton
+        android:id="@+id/showPassword2"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/eyehide"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="260dp"
+        android:background="@android:color/transparent">
+    </ImageButton>
+
+    <!--Show Password-->
+    <ImageButton
+        android:id="@+id/showPassword1"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/eyehide"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="-80dp"
+        android:background="@android:color/transparent">
+    </ImageButton>
+
+    <!-- field error -->
+    <TextView
+        android:id="@+id/nameError"
+        android:layout_width="300dp"
+        android:layout_height="25dp"
+        android:text=""
+        android:textSize="14dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-170dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="#FF0000">
+    </TextView>
+
+    <!-- field error -->
+    <TextView
+        android:id="@+id/emailError"
+        android:layout_width="300dp"
+        android:layout_height="25dp"
+        android:text=""
+        android:textSize="14dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="35dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="#FF0000">
+    </TextView>
+
+    <!-- field error -->
+    <TextView
+        android:id="@+id/verifyPasswordError"
+        android:layout_width="300dp"
+        android:layout_height="25dp"
+        android:text=""
+        android:textSize="14dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="158dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="#FF0000">
+    </TextView>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

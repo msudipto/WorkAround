@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>employeeStatusActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">employeeStatusActivity.java</span></div><h1>employeeStatusActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+<span class="nc" id="L28">public class employeeStatusActivity extends AppCompatActivity {</span>
+
+    private ScrollView scrollViewAvailability;
+    private ScrollView scrollViewTimeOff;
+    private LinearLayout availableLayout;
+    private LinearLayout requestOffLayout;
+    private String loggedInUsername;
+    private static final String URL = &quot;https://acf37832-c33a-49c7-befe-31b02a15f1b6.mock.pstmn.io/userStatus&quot;; // Mock URL
+
+    @SuppressLint({&quot;MissingInflatedId&quot;, &quot;CutPasteId&quot;})
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L40">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L41">        setContentView(R.layout.employeestatus);</span>
+
+        // Setup Toolbar
+<span class="nc" id="L44">        Toolbar toolbar = findViewById(R.id.toolbarStatus);</span>
+<span class="nc" id="L45">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L46">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L47">        getSupportActionBar().setTitle(&quot;Employee Status&quot;);</span>
+
+        // Retrieve username from SharedPreferences
+<span class="nc" id="L50">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L51">        loggedInUsername = sharedPreferences.getString(&quot;username&quot;, null);</span>
+
+        // Initialize UI components
+<span class="nc" id="L54">        scrollViewAvailability = findViewById(R.id.availabilityScroll);</span>
+<span class="nc" id="L55">        scrollViewTimeOff = findViewById(R.id.requestTimeScroll);</span>
+<span class="nc" id="L56">        availableLayout = findViewById(R.id.availabilityScroll).findViewById(R.id.availableLayout);</span>
+<span class="nc" id="L57">        requestOffLayout = findViewById(R.id.requestTimeScroll).findViewById(R.id.requestTimeLayout);</span>
+
+        // Load employee status
+<span class="nc" id="L60">        loadEmployeeStatus();</span>
+<span class="nc" id="L61">    }</span>
+
+    private void loadEmployeeStatus() {
+<span class="nc" id="L64">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                URL,
+                null,
+<span class="nc" id="L68">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Extract the &quot;data&quot; array from the response
+<span class="nc" id="L73">                            JSONArray dataArray = response.getJSONArray(&quot;data&quot;);</span>
+
+                            // Clear existing views to avoid duplication
+<span class="nc" id="L76">                            availableLayout.removeAllViews();</span>
+<span class="nc" id="L77">                            requestOffLayout.removeAllViews();</span>
+
+                            // Iterate through the JSON array
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                            for (int i = 0; i &lt; dataArray.length(); i++) {</span>
+<span class="nc" id="L81">                                JSONObject employee = dataArray.getJSONObject(i);</span>
+
+                                // Extract employee details
+<span class="nc" id="L84">                                String name = employee.getString(&quot;name&quot;);</span>
+<span class="nc" id="L85">                                String status = employee.getString(&quot;status&quot;); // Available, On Leave, or Time Off Requested</span>
+<span class="nc" id="L86">                                String details = employee.optString(&quot;details&quot;, &quot;&quot;); // Optional additional details</span>
+
+                                // Create a CardView to wrap each employee's info
+<span class="nc" id="L89">                                CardView cardView = new CardView(employeeStatusActivity.this);</span>
+<span class="nc" id="L90">                                cardView.setCardBackgroundColor(getResources().getColor(android.R.color.white));</span>
+<span class="nc" id="L91">                                cardView.setRadius(10);</span>
+<span class="nc" id="L92">                                cardView.setCardElevation(5);</span>
+
+                                // Set layout params for the CardView and add margin for spacing
+<span class="nc" id="L95">                                LinearLayout.LayoutParams cardLayoutParams = new LinearLayout.LayoutParams(</span>
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
+<span class="nc" id="L99">                                cardLayoutParams.setMargins(16, 8, 16, 8); // Adjusted margins</span>
+<span class="nc" id="L100">                                cardView.setLayoutParams(cardLayoutParams);</span>
+
+                                // Create a LinearLayout to contain both TextViews inside the CardView
+<span class="nc" id="L103">                                LinearLayout cardContentLayout = new LinearLayout(employeeStatusActivity.this);</span>
+<span class="nc" id="L104">                                cardContentLayout.setOrientation(LinearLayout.VERTICAL);</span>
+<span class="nc" id="L105">                                cardContentLayout.setPadding(16, 16, 16, 16); // Added padding</span>
+
+                                // Create a TextView for the employee's name and status
+<span class="nc" id="L108">                                TextView employeeStatus = new TextView(employeeStatusActivity.this);</span>
+<span class="nc" id="L109">                                employeeStatus.setText(name + &quot;: &quot; + status);</span>
+<span class="nc" id="L110">                                employeeStatus.setTextSize(16);</span>
+<span class="nc" id="L111">                                employeeStatus.setPadding(0, 0, 0, 8); // Padding between name/status and details</span>
+
+                                // Add the name/status TextView to the LinearLayout
+<span class="nc" id="L114">                                cardContentLayout.addView(employeeStatus);</span>
+
+                                // If additional details are provided, add another TextView
+<span class="nc bnc" id="L117" title="All 6 branches missed.">                                if (!details.isEmpty() &amp;&amp; (status.equalsIgnoreCase(&quot;On Leave&quot;) || status.equalsIgnoreCase(&quot;Time Off Requested&quot;))) {</span>
+<span class="nc" id="L118">                                    TextView detailView = new TextView(employeeStatusActivity.this);</span>
+<span class="nc" id="L119">                                    detailView.setText(&quot;Details: &quot; + details);</span>
+<span class="nc" id="L120">                                    detailView.setTextSize(14);</span>
+<span class="nc" id="L121">                                    detailView.setPadding(0, 8, 0, 0); // Padding for details TextView</span>
+<span class="nc" id="L122">                                    cardContentLayout.addView(detailView);</span>
+                                }
+
+                                // Add the LinearLayout to the CardView
+<span class="nc" id="L126">                                cardView.addView(cardContentLayout);</span>
+
+                                // Add the CardView to the appropriate layout
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                                if (status.equalsIgnoreCase(&quot;Available&quot;)) {</span>
+<span class="nc" id="L130">                                    availableLayout.addView(cardView);</span>
+                                } else {
+<span class="nc" id="L132">                                    requestOffLayout.addView(cardView);</span>
+                                }
+
+                            }
+<span class="nc" id="L136">                        } catch (JSONException e) {</span>
+<span class="nc" id="L137">                            Log.e(&quot;EmployeeStatus&quot;, &quot;JSON Parsing error: &quot; + e.getMessage());</span>
+<span class="nc" id="L138">                            Toast.makeText(employeeStatusActivity.this, &quot;Error parsing data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L139">                        }</span>
+<span class="nc" id="L140">                    }</span>
+                },
+<span class="nc" id="L142">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L145">                        Log.e(&quot;EmployeeStatus&quot;, &quot;Volley error: &quot; + error.getMessage());</span>
+<span class="nc" id="L146">                        Toast.makeText(employeeStatusActivity.this, &quot;Error fetching data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L147">                    }</span>
+                });
+
+<span class="nc" id="L150">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="nc" id="L151">    }</span>
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+<span class="nc" id="L157">            fetchUserProfile(loggedInUsername);</span>
+<span class="nc" id="L158">            return true;</span>
+        }
+<span class="nc" id="L160">        return super.onOptionsItemSelected(item);</span>
+    }
+
+    private void fetchUserProfile(String username) {
+<span class="nc" id="L164">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/&quot; + username;</span>
+
+<span class="nc" id="L166">        JsonObjectRequest profileRequest = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                url,
+                null,
+                response -&gt; {
+                    try {
+<span class="nc" id="L172">                        int userId = response.getInt(&quot;userId&quot;);</span>
+<span class="nc" id="L173">                        String fullName = response.getString(&quot;fullName&quot;);</span>
+<span class="nc" id="L174">                        String userType = response.getString(&quot;userType&quot;);</span>
+
+<span class="nc" id="L176">                        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L177">                        SharedPreferences.Editor editor = sharedPreferences.edit();</span>
+<span class="nc" id="L178">                        editor.putInt(&quot;userId&quot;, userId);</span>
+<span class="nc" id="L179">                        editor.putString(&quot;username&quot;, username);</span>
+<span class="nc" id="L180">                        editor.putString(&quot;userType&quot;, userType);</span>
+<span class="nc" id="L181">                        editor.putString(&quot;fullName&quot;, fullName);</span>
+<span class="nc" id="L182">                        editor.apply();</span>
+
+                        Intent intent;
+<span class="nc bnc" id="L185" title="All 4 branches missed.">                        switch (userType) {</span>
+                            case &quot;ADMIN&quot;:
+<span class="nc" id="L187">                                intent = new Intent(employeeStatusActivity.this, adminActivity.class);</span>
+<span class="nc" id="L188">                                break;</span>
+                            case &quot;EMPLOYER&quot;:
+<span class="nc" id="L190">                                intent = new Intent(employeeStatusActivity.this, employerActivity.class);</span>
+<span class="nc" id="L191">                                break;</span>
+                            case &quot;EMPLOYEE&quot;:
+<span class="nc" id="L193">                                intent = new Intent(employeeStatusActivity.this, employeeActivity.class);</span>
+<span class="nc" id="L194">                                break;</span>
+                            default:
+<span class="nc" id="L196">                                Toast.makeText(this, &quot;Unknown user type&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L197">                                return;</span>
+                        }
+<span class="nc" id="L199">                        startActivity(intent);</span>
+
+<span class="nc" id="L201">                    } catch (JSONException e) {</span>
+<span class="nc" id="L202">                        Toast.makeText(this, &quot;Error parsing user profile.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L203">                        Log.e(&quot;Profile Error&quot;, &quot;JSON parsing error&quot;, e);</span>
+<span class="nc" id="L204">                    }</span>
+<span class="nc" id="L205">                },</span>
+                error -&gt; {
+<span class="nc" id="L207">                    Toast.makeText(this, &quot;Failed to fetch user profile.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L208">                    Log.e(&quot;Profile Error&quot;, error.toString());</span>
+<span class="nc" id="L209">                });</span>
+
+<span class="nc" id="L211">        Volley.newRequestQueue(this).add(profileRequest);</span>
+<span class="nc" id="L212">    }</span>
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

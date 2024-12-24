@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>joinNowActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">joinNowActivity.java</span></div><h1>joinNowActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.Patterns;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * This class handles the signing up of a new user
+ */
+<span class="nc" id="L39">public class joinNowActivity extends AppCompatActivity {</span>
+
+    private Button backButton;
+    private Button signUp;
+    private EditText name;
+    private EditText email;
+    private EditText usernameFill;
+    private EditText password;
+    private EditText verifyPassword;
+    private TextView nameErrorMessage;
+    private TextView emailErrorMessage;
+    private TextView verifyPasswordErrorMessage;
+    private ImageButton showPassword1;
+    private ImageButton showPassword2;
+
+<span class="nc" id="L54">    boolean isPasswordVisible1 = false;</span>
+<span class="nc" id="L55">    boolean isPasswordVisible2 = false;</span>
+
+<span class="nc" id="L57">    private String signup_url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/login/signup&quot;;</span>
+    private JSONObject signup_details;
+
+
+    /**
+     * The running of the class, initiallizes all buttons and maps them to the XML
+     * @param savedInstanceState
+     */
+    @SuppressLint({&quot;WrongViewCast&quot;, &quot;MissingInflatedId&quot;})
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L68">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L69">        setContentView(R.layout.joinnow);</span>
+
+<span class="nc" id="L71">        backButton = findViewById(R.id.backButton);</span>
+<span class="nc" id="L72">        signUp = findViewById(R.id.joinNow);</span>
+<span class="nc" id="L73">        name = findViewById(R.id.enterName);</span>
+<span class="nc" id="L74">        email = findViewById(R.id.emailInput);</span>
+<span class="nc" id="L75">        usernameFill = findViewById(R.id.usernameInput);</span>
+<span class="nc" id="L76">        password = findViewById(R.id.enterPassword);</span>
+<span class="nc" id="L77">        verifyPassword = findViewById(R.id.reenterPassword);</span>
+<span class="nc" id="L78">        nameErrorMessage = findViewById(R.id.nameError);</span>
+<span class="nc" id="L79">        emailErrorMessage = findViewById(R.id.emailError);</span>
+<span class="nc" id="L80">        verifyPasswordErrorMessage = findViewById(R.id.verifyPasswordError);</span>
+<span class="nc" id="L81">        showPassword1 = findViewById(R.id.showPassword1);</span>
+<span class="nc" id="L82">        showPassword2 = findViewById(R.id.showPassword2);</span>
+
+
+        // Set initial visibility of error messages to gone
+<span class="nc" id="L86">        nameErrorMessage.setVisibility(View.GONE);</span>
+<span class="nc" id="L87">        emailErrorMessage.setVisibility(View.GONE);</span>
+<span class="nc" id="L88">        verifyPasswordErrorMessage.setVisibility(View.GONE);</span>
+
+<span class="nc" id="L90">        signup_details = new JSONObject();</span>
+
+        /**
+         * Username text entry
+         */
+<span class="nc" id="L95">        name.addTextChangedListener(new TextWatcher() {</span>
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+<span class="nc" id="L98">            }</span>
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+<span class="nc" id="L102">                fillUsername(name, usernameFill);</span>
+<span class="nc" id="L103">            }</span>
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+<span class="nc" id="L107">            }</span>
+        });
+
+        /**
+         * User's name text entry
+         */
+        // Add TextWatcher for name EditText
+<span class="nc" id="L114">        name.addTextChangedListener(new TextWatcher() {</span>
+            @Override
+<span class="nc" id="L116">            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}</span>
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                if (isValidFullName(s.toString())) {</span>
+<span class="nc" id="L121">                    nameErrorMessage.setVisibility(View.GONE);</span>
+                } else {
+<span class="nc" id="L123">                    nameErrorMessage.setVisibility(View.VISIBLE);</span>
+<span class="nc" id="L124">                    nameErrorMessage.setText(&quot;Enter a valid full name&quot;);</span>
+                }
+<span class="nc" id="L126">            }</span>
+
+            @Override
+<span class="nc" id="L129">            public void afterTextChanged(Editable s) {}</span>
+        });
+
+        /**
+         * Text entry for email
+         */
+        // Add TextWatcher for email EditText
+<span class="nc" id="L136">        email.addTextChangedListener(new TextWatcher() {</span>
+            @Override
+<span class="nc" id="L138">            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}</span>
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+<span class="nc bnc" id="L142" title="All 2 branches missed.">                if (isValidEmail(s.toString())) {</span>
+<span class="nc" id="L143">                    emailErrorMessage.setVisibility(View.GONE);</span>
+                } else {
+<span class="nc" id="L145">                    emailErrorMessage.setVisibility(View.VISIBLE);</span>
+<span class="nc" id="L146">                    emailErrorMessage.setText(&quot;Enter a valid email&quot;);</span>
+                }
+<span class="nc" id="L148">            }</span>
+
+            @Override
+<span class="nc" id="L151">            public void afterTextChanged(Editable s) {}</span>
+        });
+
+        /**
+         * Text entry for password
+         */
+        // Add TextWatcher for password EditText
+<span class="nc" id="L158">        password.addTextChangedListener(new TextWatcher() {</span>
+            @Override
+<span class="nc" id="L160">            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}</span>
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+<span class="nc bnc" id="L164" title="All 2 branches missed.">                if (isValidPassword(s.toString())) {</span>
+                    // Hide any alert or error related to password
+                } else {
+                    // Optionally display an error message if needed
+                }
+<span class="nc" id="L169">            }</span>
+
+            @Override
+<span class="nc" id="L172">            public void afterTextChanged(Editable s) {}</span>
+        });
+
+        /**
+         * Text entry for verify password
+         */
+        // Add TextWatcher for verify password EditText
+<span class="nc" id="L179">        verifyPassword.addTextChangedListener(new TextWatcher() {</span>
+            @Override
+<span class="nc" id="L181">            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}</span>
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                if (s.toString().equals(password.getText().toString())) {</span>
+<span class="nc" id="L186">                    verifyPasswordErrorMessage.setVisibility(View.GONE);</span>
+                } else {
+<span class="nc" id="L188">                    verifyPasswordErrorMessage.setVisibility(View.VISIBLE);</span>
+<span class="nc" id="L189">                    verifyPasswordErrorMessage.setText(&quot;Passwords do not match&quot;);</span>
+                }
+<span class="nc" id="L191">            }</span>
+
+            @Override
+<span class="nc" id="L194">            public void afterTextChanged(Editable s) {}</span>
+        });
+
+        /**
+         * Button to go back to login screen
+         */
+<span class="nc" id="L200">        backButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L203">                Intent intent = new Intent(joinNowActivity.this, loginActivity.class);</span>
+<span class="nc" id="L204">                startActivity(intent);</span>
+<span class="nc" id="L205">            }</span>
+        });
+
+        /**
+         * Submit all entries to sign up
+         */
+<span class="nc" id="L211">        signUp.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L214">                String nameFilled = name.getText().toString();</span>
+<span class="nc" id="L215">                Log.i(&quot;hidden&quot;, nameFilled);</span>
+<span class="nc" id="L216">                String emailFilled = email.getText().toString();</span>
+<span class="nc" id="L217">                Log.i(&quot;hidden&quot;, emailFilled);</span>
+<span class="nc" id="L218">                String usernameFilled = usernameFill.getText().toString();</span>
+<span class="nc" id="L219">                Log.i(&quot;hidden&quot;, usernameFilled);</span>
+<span class="nc" id="L220">                String passwordFilled = password.getText().toString();</span>
+<span class="nc" id="L221">                Log.i(&quot;hidden&quot;, passwordFilled);</span>
+<span class="nc" id="L222">                String verifyPasswordFilled = verifyPassword.getText().toString();</span>
+
+                // Check if name includes first and last name
+<span class="nc bnc" id="L225" title="All 2 branches missed.">                if (!isValidFullName(nameFilled)) {</span>
+<span class="nc" id="L226">                    nameErrorMessage.setText(&quot;Enter a valid full name&quot;);</span>
+<span class="nc" id="L227">                    nameErrorMessage.setVisibility(View.VISIBLE);</span>
+                } else {
+<span class="nc" id="L229">                    nameErrorMessage.setVisibility(View.GONE);</span>
+                }
+
+                // Check if email is valid
+<span class="nc bnc" id="L233" title="All 2 branches missed.">                if (!isValidEmail(emailFilled)) {</span>
+<span class="nc" id="L234">                    emailErrorMessage.setText(&quot;Enter a valid email&quot;);</span>
+<span class="nc" id="L235">                    emailErrorMessage.setVisibility(View.VISIBLE);</span>
+                } else {
+<span class="nc" id="L237">                    emailErrorMessage.setVisibility(View.GONE);</span>
+                }
+
+                // Check to make sure password has minimum requirements
+<span class="nc bnc" id="L241" title="All 2 branches missed.">                if (!isValidPassword(passwordFilled)) {</span>
+<span class="nc" id="L242">                    showAlertDialog(&quot;Error&quot;, &quot;Password must be at least 8 characters long, contain 1 uppercase letter, 1 number, and 1 special character&quot;);</span>
+<span class="nc" id="L243">                    return; // Exit the method if password is invalid</span>
+                }
+
+                // Check to see if passwords match
+<span class="nc bnc" id="L247" title="All 2 branches missed.">                if (!passwordFilled.equals(verifyPasswordFilled)) {</span>
+<span class="nc" id="L248">                    verifyPasswordErrorMessage.setText(&quot;Passwords do not match&quot;);</span>
+<span class="nc" id="L249">                    verifyPasswordErrorMessage.setVisibility(View.VISIBLE);</span>
+<span class="nc" id="L250">                    return; // Exit the method if passwords do not match</span>
+                } else {
+<span class="nc" id="L252">                    verifyPasswordErrorMessage.setVisibility(View.GONE);</span>
+                }
+                try {
+<span class="nc" id="L255">                    signup_details.put(&quot;username&quot;, usernameFilled);</span>
+<span class="nc" id="L256">                    signup_details.put(&quot;email&quot;, emailFilled);</span>
+<span class="nc" id="L257">                    signup_details.put(&quot;password&quot;, passwordFilled);</span>
+<span class="nc" id="L258">                    signup_details.put(&quot;full_name&quot;, nameFilled);</span>
+
+<span class="nc" id="L260">                } catch (JSONException e) {</span>
+<span class="nc" id="L261">                    throw new RuntimeException(e);</span>
+<span class="nc" id="L262">                }</span>
+
+                // If all validations pass, proceed to loginActivity
+<span class="nc" id="L265">                postRequest(signup_details);</span>
+<span class="nc" id="L266">                Intent intent = new Intent(joinNowActivity.this, loginActivity.class);</span>
+<span class="nc" id="L267">                startActivity(intent);</span>
+<span class="nc" id="L268">            }</span>
+        });
+
+
+        // Set initial input types for password fields to hidden
+<span class="nc" id="L273">        password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);</span>
+<span class="nc" id="L274">        verifyPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);</span>
+
+        /**
+         * Show password button
+         */
+        //Show and hide password for first line
+<span class="nc" id="L280">        showPassword1.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc bnc" id="L283" title="All 2 branches missed.">                if(isPasswordVisible1){</span>
+<span class="nc" id="L284">                    password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);</span>
+<span class="nc" id="L285">                    showPassword1.setImageResource(R.drawable.eyehide);</span>
+                }
+                else{
+<span class="nc" id="L288">                    password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);</span>
+<span class="nc" id="L289">                    showPassword1.setImageResource(R.drawable.eyeshow);</span>
+                }
+<span class="nc bnc" id="L291" title="All 2 branches missed.">                isPasswordVisible1 = !isPasswordVisible1;</span>
+<span class="nc" id="L292">            }</span>
+        });
+
+        /**
+         * Hide password button
+         */
+        //Show and hide password for second line
+<span class="nc" id="L299">        showPassword2.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc bnc" id="L302" title="All 2 branches missed.">                if(isPasswordVisible2){</span>
+<span class="nc" id="L303">                    verifyPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);</span>
+<span class="nc" id="L304">                    showPassword2.setImageResource(R.drawable.eyehide);</span>
+                }
+                else{
+<span class="nc" id="L307">                    verifyPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);</span>
+<span class="nc" id="L308">                    showPassword2.setImageResource(R.drawable.eyeshow);</span>
+                }
+<span class="nc bnc" id="L310" title="All 2 branches missed.">                isPasswordVisible2 = !isPasswordVisible2;</span>
+<span class="nc" id="L311">            }</span>
+        });
+<span class="nc" id="L313">    }</span>
+
+    /**
+     * Check if the full name is valid
+     * @param nameFilled
+     * @return
+     */
+    private boolean isValidFullName(String nameFilled) {
+        // Check if full name is not empty and contains at least one space (indicating two words)
+<span class="nc bnc" id="L322" title="All 6 branches missed.">        return !TextUtils.isEmpty(nameFilled) &amp;&amp; nameFilled.contains(&quot; &quot;) &amp;&amp; nameFilled.trim().split(&quot;\\s+&quot;).length &gt;= 2;</span>
+    }
+
+    /**
+     * Check if the email is valid
+     * @param emailFilled
+     * @return
+     */
+    private boolean isValidEmail(String emailFilled) {
+        // Check if email matches legit email addresses
+<span class="nc bnc" id="L332" title="All 4 branches missed.">        return !TextUtils.isEmpty(emailFilled) &amp;&amp; Patterns.EMAIL_ADDRESS.matcher(emailFilled).matches();</span>
+    }
+
+    /**
+     * Check if the password meets all parameters. One uppercase letter, one digit, one special character.
+     * @param passwordFilled
+     * @return
+     */
+    private boolean isValidPassword(String passwordFilled) {
+        // Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character
+<span class="nc bnc" id="L342" title="All 2 branches missed.">        return passwordFilled.length() &gt;= 8</span>
+<span class="nc bnc" id="L343" title="All 2 branches missed.">                &amp;&amp; passwordFilled.matches(&quot;.*[A-Z].*&quot;)        // At least one uppercase letter</span>
+<span class="nc bnc" id="L344" title="All 2 branches missed.">                &amp;&amp; passwordFilled.matches(&quot;.*[0-9].*&quot;)        // At least one digit</span>
+<span class="nc bnc" id="L345" title="All 2 branches missed.">                &amp;&amp; passwordFilled.matches(&quot;.*[!@#\\$%^&amp;*].*&quot;); // At least one special character</span>
+    }
+
+    /**
+     * Helper method to show alerts
+     * @param title
+     * @param message
+     */
+    private void showAlertDialog(String title, String message) {
+<span class="nc" id="L354">        AlertDialog.Builder builder = new AlertDialog.Builder(joinNowActivity.this);</span>
+<span class="nc" id="L355">        builder.setTitle(title);</span>
+<span class="nc" id="L356">        builder.setMessage(message);</span>
+<span class="nc" id="L357">        builder.setPositiveButton(&quot;OK&quot;, (dialog, which) -&gt; dialog.dismiss());</span>
+<span class="nc" id="L358">        builder.show();</span>
+<span class="nc" id="L359">    }</span>
+
+    /**
+     * Helper method to autofill username from given name
+     * @param name
+     * @param username
+     */
+    private void fillUsername(EditText name, EditText username){
+<span class="nc" id="L367">        String fullName = name.getText().toString().trim();</span>
+        //Split name by space
+<span class="nc" id="L369">        String[] firstLast = fullName.split(&quot;\\s+&quot;);</span>
+
+        //Check first and last is in name field
+<span class="nc bnc" id="L372" title="All 2 branches missed.">        if(firstLast.length &gt;= 2){</span>
+            //first initial
+<span class="nc" id="L374">            String firstInitial = firstLast[0].substring(0, 1).toLowerCase();</span>
+            //last name
+<span class="nc" id="L376">            String lastName = firstLast[firstLast.length - 1].toLowerCase();</span>
+
+<span class="nc" id="L378">            String usernameFinal = firstInitial + lastName;</span>
+<span class="nc" id="L379">            usernameFill.setText(usernameFinal);</span>
+        }
+<span class="nc" id="L381">    }</span>
+
+    /**
+     * POST request to add a new userprofile object to the database
+     * @param j
+     */
+    public void postRequest(JSONObject j) {
+<span class="nc" id="L388">        JsonObjectRequest post_join = new JsonObjectRequest(</span>
+                Request.Method.POST,
+                signup_url,
+                j,
+<span class="nc" id="L392">                new Response.Listener&lt;JSONObject&gt;() {</span>
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L396">                        Log.d(&quot;Volley Response&quot;, response.toString());</span>
+<span class="nc" id="L397">                    }</span>
+                },
+<span class="nc" id="L399">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L402">                        Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L403">                    }</span>
+                }
+
+        )
+<span class="nc" id="L407">        {</span>
+            // dont know if necessary
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="nc" id="L411">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L412">                return headers;</span>
+            }
+
+            @Override
+            protected Map&lt;String, String&gt; getParams() {
+<span class="nc" id="L417">                Map&lt;String, String&gt; params = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L418">                return params;</span>
+            }
+        };
+
+<span class="nc" id="L422">        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(post_join);</span>
+<span class="nc" id="L423">    }</span>
+
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

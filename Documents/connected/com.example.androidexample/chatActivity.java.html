@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>chatActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">chatActivity.java</span></div><h1>chatActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="nc" id="L20">public class chatActivity extends AppCompatActivity {</span>
+
+    private TextView chatTitle;
+    private RecyclerView recyclerViewMessages;
+    private EditText messageInput;
+    private Button sendButton;
+    private String loggedInUsername;
+
+    private messageAdapter messageAdapter;
+    private List&lt;String&gt; messageList;
+
+    private chatWebSocketClient chatWebSocketClient;
+    private String username;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L36">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L37">        setContentView(R.layout.chatactivity);</span>
+
+<span class="nc" id="L39">        Toolbar toolbar = findViewById(R.id.chat_toolbar);</span>
+<span class="nc" id="L40">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L41">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L42">        setTitle(&quot;&quot;);</span>
+
+<span class="nc" id="L44">        chatTitle = findViewById(R.id.chatTitle);</span>
+<span class="nc" id="L45">        recyclerViewMessages = findViewById(R.id.recyclerView_messages);</span>
+<span class="nc" id="L46">        messageInput = findViewById(R.id.messageInput);</span>
+<span class="nc" id="L47">        sendButton = findViewById(R.id.sendButton);</span>
+
+<span class="nc" id="L49">        messageInput.requestFocus();</span>
+
+        // Retrieve data from SharedPreferences instead of Intent
+<span class="nc" id="L52">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L53">        loggedInUsername = sharedPreferences.getString(&quot;username&quot;, null);</span>
+<span class="nc" id="L54">        String name = sharedPreferences.getString(&quot;name&quot;, &quot;&quot;);</span>
+<span class="nc" id="L55">        boolean isGroup = sharedPreferences.getBoolean(&quot;isGroup&quot;, false);</span>
+<span class="nc" id="L56">        username = sharedPreferences.getString(&quot;username&quot;, &quot;&quot;);  // Get username</span>
+<span class="nc" id="L57">        String chatId = sharedPreferences.getString(&quot;chatId&quot;, &quot;&quot;);</span>
+
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        chatTitle.setText(isGroup ? &quot;Group: &quot; + name : name);</span>
+
+        // Initialize message list and adapter
+<span class="nc" id="L62">        messageList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L63">        messageAdapter = new messageAdapter(this, messageList, true);</span>
+<span class="nc" id="L64">        recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));</span>
+<span class="nc" id="L65">        recyclerViewMessages.setAdapter(messageAdapter);</span>
+
+        // Initialize and start WebSocket connection
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        String chatType = isGroup ? &quot;group&quot; : &quot;individual&quot;;</span>
+<span class="nc" id="L69">        chatWebSocketClient = new chatWebSocketClient();</span>
+<span class="nc" id="L70">        chatWebSocketClient.startWebSocket(chatType, username);  // Pass username to WebSocket</span>
+
+        // Listen for incoming messages from WebSocket
+<span class="nc" id="L73">        chatWebSocketClient.setMessageListener(new chatWebSocketClient.MessageListener() {</span>
+            @Override
+            public void onMessageReceived(String message) {
+<span class="nc" id="L76">                runOnUiThread(() -&gt; {</span>
+                    // Only add the message if it isn't sent by the user (to avoid duplication)
+<span class="nc bnc" id="L78" title="All 2 branches missed.">                    if (!message.startsWith(username + &quot;: &quot;)) {</span>
+<span class="nc" id="L79">                        messageList.add(message);</span>
+<span class="nc" id="L80">                        messageAdapter.notifyItemInserted(messageList.size() - 1);</span>
+<span class="nc" id="L81">                        recyclerViewMessages.scrollToPosition(messageList.size() - 1);</span>
+                    }
+<span class="nc" id="L83">                });</span>
+<span class="nc" id="L84">            }</span>
+        });
+
+        // Set up send button to send messages over WebSocket
+<span class="nc" id="L88">        sendButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L89">            String message = messageInput.getText().toString().trim();</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            if (!message.isEmpty()) {</span>
+<span class="nc" id="L91">                String formattedMessage = message;</span>
+<span class="nc" id="L92">                chatWebSocketClient.sendMessage(formattedMessage);</span>
+<span class="nc" id="L93">                messageList.add(formattedMessage);</span>
+<span class="nc" id="L94">                messageAdapter.notifyItemInserted(messageList.size() - 1);</span>
+<span class="nc" id="L95">                recyclerViewMessages.scrollToPosition(messageList.size() - 1);</span>
+<span class="nc" id="L96">                messageInput.setText(&quot;&quot;);</span>
+            }
+<span class="nc" id="L98">        });</span>
+<span class="nc" id="L99">    }</span>
+
+    @Override
+    protected void onDestroy() {
+<span class="nc" id="L103">        super.onDestroy();</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (chatWebSocketClient != null) {</span>
+<span class="nc" id="L105">            chatWebSocketClient.closeWebSocket();</span>
+        }
+<span class="nc" id="L107">    }</span>
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+<span class="nc" id="L112">            Intent intent = new Intent(chatActivity.this, messageActivity.class);</span>
+<span class="nc" id="L113">            startActivity(intent);</span>
+<span class="nc" id="L114">            return true;</span>
+        }
+<span class="nc" id="L116">        return super.onOptionsItemSelected(item);</span>
+    }
+}
+
+
+
+
+
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

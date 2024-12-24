@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>createScheduleAdminActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">createScheduleAdminActivity.java</span></div><h1>createScheduleAdminActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+<span class="nc" id="L32">public class createScheduleAdminActivity extends AppCompatActivity {</span>
+    private EditText dateEditText;
+    private TextView startTimeText, endTimeText;
+    private Button saveButton;
+    private Spinner nameEntry, employeeAssignedEditText;
+
+    private boolean doesNotExist;
+    private RequestQueue requestQueue;
+
+    private String selectedStartTime;
+    private String selectedEndTime;
+    private String selectedDate;
+
+    @SuppressLint(&quot;MissingInflatedId&quot;)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L48">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L49">        setContentView(R.layout.createscheduleadmin);</span>
+
+        // Initialize views
+<span class="nc" id="L52">        dateEditText = findViewById(R.id.dateScheduled);</span>
+<span class="nc" id="L53">        startTimeText = findViewById(R.id.startTimeText);</span>
+<span class="nc" id="L54">        endTimeText = findViewById(R.id.endTimeText);</span>
+<span class="nc" id="L55">        saveButton = findViewById(R.id.saveButton);</span>
+<span class="nc" id="L56">        nameEntry = findViewById(R.id.nameEntry);</span>
+<span class="nc" id="L57">        employeeAssignedEditText = findViewById(R.id.nameEntry);</span>
+
+        // Set up the toolbar
+<span class="nc" id="L60">        Toolbar toolbar = findViewById(R.id.toolBarScheduler);</span>
+<span class="nc" id="L61">        setSupportActionBar(toolbar);</span>
+<span class="nc" id="L62">        getSupportActionBar().setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L63">        getSupportActionBar().setTitle(&quot;Create Schedule&quot;);</span>
+
+<span class="nc" id="L65">        requestQueue = Volley.newRequestQueue(this);</span>
+
+        // Set up the date picker for the EditText
+<span class="nc" id="L68">        setUpDatePicker();</span>
+
+        // Set up time picker for start and end times
+<span class="nc" id="L71">        setUpTimePicker(startTimeText, true); // true for start time</span>
+<span class="nc" id="L72">        setUpTimePicker(endTimeText, false);  // false for end time</span>
+
+        // Set up the save button
+<span class="nc" id="L75">        saveButton.setOnClickListener(view -&gt; {</span>
+<span class="nc" id="L76">            checkUserExists();</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (!doesNotExist) {</span>
+                // Create schedule request
+<span class="nc" id="L79">                createSchedule();</span>
+            } else {
+<span class="nc" id="L81">                Toast.makeText(this, &quot;User does not exist.&quot;, Toast.LENGTH_SHORT).show();</span>
+            }
+<span class="nc" id="L83">        });</span>
+<span class="nc" id="L84">    }</span>
+
+    private void setUpDatePicker() {
+<span class="nc" id="L87">        dateEditText.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L88">            final Calendar calendar = Calendar.getInstance();</span>
+<span class="nc" id="L89">            int year = calendar.get(Calendar.YEAR);</span>
+<span class="nc" id="L90">            int month = calendar.get(Calendar.MONTH);</span>
+<span class="nc" id="L91">            int day = calendar.get(Calendar.DAY_OF_MONTH);</span>
+
+<span class="nc" id="L93">            DatePickerDialog datePickerDialog = new DatePickerDialog(createScheduleAdminActivity.this,</span>
+                    (view, selectedYear, selectedMonth, selectedDay) -&gt; {
+<span class="nc" id="L95">                        selectedDate = selectedYear + &quot;-&quot; + (selectedMonth + 1) + &quot;-&quot; + selectedDay;</span>
+<span class="nc" id="L96">                        dateEditText.setText((selectedMonth + 1) + &quot;/&quot; + selectedDay + &quot;/&quot; + selectedYear);</span>
+<span class="nc" id="L97">                    }, year, month, day);</span>
+
+<span class="nc" id="L99">            datePickerDialog.show();</span>
+<span class="nc" id="L100">        });</span>
+<span class="nc" id="L101">    }</span>
+
+    private void setUpTimePicker(TextView timeText, boolean isStartTime) {
+<span class="nc" id="L104">        timeText.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L105">            final Calendar calendar = Calendar.getInstance();</span>
+<span class="nc" id="L106">            int hour = calendar.get(Calendar.HOUR_OF_DAY);</span>
+<span class="nc" id="L107">            int minute = calendar.get(Calendar.MINUTE);</span>
+
+<span class="nc" id="L109">            TimePickerDialog timePickerDialog = new TimePickerDialog(createScheduleAdminActivity.this,</span>
+                    (view, selectedHour, selectedMinute) -&gt; {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">                        boolean isAM = selectedHour &lt; 12;</span>
+<span class="nc" id="L112">                        int hourIn12Format = selectedHour % 12;</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                        if (hourIn12Format == 0) hourIn12Format = 12;</span>
+
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                        String formattedTime = String.format(&quot;%02d:%02d %s&quot;, hourIn12Format, selectedMinute, isAM ? &quot;AM&quot; : &quot;PM&quot;);</span>
+
+                        // Store the time in a variable based on start or end time
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                        if (isStartTime) {</span>
+<span class="nc" id="L119">                            selectedStartTime = formattedTime;</span>
+                        } else {
+<span class="nc" id="L121">                            selectedEndTime = formattedTime;</span>
+                        }
+
+<span class="nc" id="L124">                        timeText.setText(formattedTime);</span>
+<span class="nc" id="L125">                    }, hour, minute, false);</span>
+
+<span class="nc" id="L127">            timePickerDialog.show();</span>
+<span class="nc" id="L128">        });</span>
+<span class="nc" id="L129">    }</span>
+
+    private void createSchedule() {
+        // Combine date and time for start and end time in ISO 8601 format
+<span class="nc" id="L133">        String startDateTime = selectedDate + &quot;T&quot; + formatTimeTo24Hour(selectedStartTime);</span>
+<span class="nc" id="L134">        String endDateTime = selectedDate + &quot;T&quot; + formatTimeTo24Hour(selectedEndTime);</span>
+
+        // Get employee (from text entry) and employer (from SharedPreferences)
+<span class="nc" id="L137">        String employeeAssignedTo = employeeAssignedEditText.getSelectedItem().toString().trim();</span>
+
+        // Fetch employerAssignedTo (username) from SharedPreferences
+<span class="nc" id="L140">        SharedPreferences sharedPreferences = getSharedPreferences(&quot;UserPrefs&quot;, MODE_PRIVATE);</span>
+<span class="nc" id="L141">        String employerAssignedTo = sharedPreferences.getString(&quot;username&quot;, &quot;&quot;);  // Default to empty string if no value is found</span>
+
+        // Prepare the schedule data to send in the POST request
+<span class="nc" id="L144">        JSONObject scheduleData = new JSONObject();</span>
+        try {
+<span class="nc" id="L146">            scheduleData.put(&quot;eventType&quot;, &quot;Sample&quot;);  // Example eventType, modify as necessary</span>
+<span class="nc" id="L147">            scheduleData.put(&quot;startTime&quot;, startDateTime); // Format: yyyy-MM-dd'T'HH:mm:ss</span>
+<span class="nc" id="L148">            scheduleData.put(&quot;endTime&quot;, endDateTime); // Format: yyyy-MM-dd'T'HH:mm:ss</span>
+<span class="nc" id="L149">            scheduleData.put(&quot;userId&quot;, 101);  // Assuming userId is 101, modify as necessary</span>
+<span class="nc" id="L150">            scheduleData.put(&quot;projectId&quot;, 101); // Modify projectId as necessary</span>
+<span class="nc" id="L151">            scheduleData.put(&quot;employeeAssignedTo&quot;, employeeAssignedTo);</span>
+<span class="nc" id="L152">            scheduleData.put(&quot;employerAssignedTo&quot;, employerAssignedTo);</span>
+
+<span class="nc" id="L154">            Log.e(&quot;JSON RESPONSE&quot;, scheduleData.toString());</span>
+<span class="nc" id="L155">        } catch (JSONException e) {</span>
+<span class="nc" id="L156">            e.printStackTrace();</span>
+<span class="nc" id="L157">            return;</span>
+<span class="nc" id="L158">        }</span>
+
+        // Send the POST request to create the schedule
+<span class="nc" id="L161">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/schedules/create&quot;;</span>
+<span class="nc" id="L162">        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, scheduleData,</span>
+                response -&gt; {
+                    // Success response
+<span class="nc" id="L165">                    Log.d(&quot;POST Response&quot;, response.toString());</span>
+
+<span class="nc" id="L167">                    Intent intent = new Intent(createScheduleAdminActivity.this, scheduleAdminActivity.class);</span>
+<span class="nc" id="L168">                    startActivity(intent);</span>
+<span class="nc" id="L169">                },</span>
+                error -&gt; {
+                    // Error handling: log error and print response body if possible
+<span class="nc bnc" id="L172" title="All 2 branches missed.">                    if (error.networkResponse != null) {</span>
+<span class="nc" id="L173">                        Log.e(&quot;POST Error&quot;, &quot;Status Code: &quot; + error.networkResponse.statusCode);</span>
+<span class="nc" id="L174">                        Log.e(&quot;POST Error&quot;, &quot;Response Body: &quot; + new String(error.networkResponse.data));</span>
+                    }
+<span class="nc" id="L176">                    Toast.makeText(this, &quot;Failed to create schedule&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L177">                });</span>
+
+<span class="nc" id="L179">        requestQueue.add(postRequest);</span>
+<span class="nc" id="L180">    }</span>
+
+    // Converts 12-hour time format to 24-hour format (backend expected)
+    private String formatTimeTo24Hour(String time) {
+        try {
+<span class="nc" id="L185">            SimpleDateFormat twelveHourFormat = new SimpleDateFormat(&quot;hh:mm a&quot;);</span>
+<span class="nc" id="L186">            SimpleDateFormat twentyFourHourFormat = new SimpleDateFormat(&quot;HH:mm&quot;);</span>
+<span class="nc" id="L187">            Date date = twelveHourFormat.parse(time);</span>
+<span class="nc" id="L188">            return twentyFourHourFormat.format(date);</span>
+<span class="nc" id="L189">        } catch (Exception e) {</span>
+<span class="nc" id="L190">            e.printStackTrace();</span>
+<span class="nc" id="L191">            return &quot;&quot;;</span>
+        }
+    }
+
+
+    private void checkUserExists() {
+<span class="nc" id="L197">        String username = nameEntry.getSelectedItem().toString().trim();</span>
+
+        // Send a GET request to check if the user exists
+<span class="nc" id="L200">        String url = &quot;http://coms-3090-046.class.las.iastate.edu:8080/api/userprofile/username/&quot; + username;</span>
+
+<span class="nc" id="L202">        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,</span>
+                response -&gt; {
+                    // Check if the response is empty or null
+<span class="nc bnc" id="L205" title="All 2 branches missed.">                    doesNotExist = response.length() == 0;</span>
+<span class="nc" id="L206">                    Log.d(&quot;Volley Response&quot;, response.toString());</span>
+<span class="nc" id="L207">                }, error -&gt; {</span>
+<span class="nc" id="L208">            doesNotExist = true;</span>
+<span class="nc" id="L209">            Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L210">        });</span>
+
+<span class="nc" id="L212">        requestQueue.add(request);</span>
+<span class="nc" id="L213">    }</span>
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        if (item.getItemId() == android.R.id.home) {</span>
+            // Redirect user to the previous screen (adjust based on your permissions)
+<span class="nc" id="L221">            Intent intent = new Intent(createScheduleAdminActivity.this, scheduleAdminActivity.class);</span>
+<span class="nc" id="L222">            startActivity(intent);</span>
+<span class="nc" id="L223">            return true;</span>
+        }
+<span class="nc" id="L225">        return super.onOptionsItemSelected(item);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

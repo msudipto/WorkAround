@@ -1,0 +1,238 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Image</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.image</a>
+</div>
+
+<h1>Coverage Summary for Class: Image (coms309.image)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Image</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Image$HibernateInstantiator$FSE7dGgy</td>
+  </tr>
+  <tr>
+    <td class="name">Image$HibernateProxy$o9WijZoP</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.image;
+&nbsp;
+&nbsp;import coms309.entity.Chat;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import jakarta.validation.constraints.NotEmpty;
+&nbsp;import jakarta.validation.constraints.NotNull;
+&nbsp;import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;
+&nbsp;/**
+&nbsp; * Entity class representing an Image.
+&nbsp; **/
+&nbsp;@Entity
+&nbsp;@EnableWebSocketMessageBroker
+&nbsp;public class Image {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.AUTO)
+&nbsp;    private Long id;
+&nbsp;
+&nbsp;    @NotNull(message = &quot;File path cannot be null.&quot;)
+&nbsp;    @NotEmpty(message = &quot;File path cannot be empty.&quot;)
+&nbsp;    private String filePath;
+&nbsp;
+&nbsp;    @OneToOne(mappedBy = &quot;image&quot;)
+&nbsp;    private Chat chat;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor for Image.
+&nbsp;     **/
+<b class="fc">&nbsp;    public Image() {}</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Parameterized constructor for Image.
+&nbsp;     * @param filePath The file path of the image.
+&nbsp;     **/
+<b class="nc">&nbsp;    public Image(String filePath) {</b>
+<b class="nc">&nbsp;        this.filePath = filePath;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the ID of the image.
+&nbsp;     * @return The ID of the image.
+&nbsp;     **/
+&nbsp;    public Long getId() {
+<b class="nc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the ID of the image.
+&nbsp;     * @param id The ID to set.
+&nbsp;     **/
+&nbsp;    public void setId(Long id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the file path of the image.
+&nbsp;     * @return The file path of the image.
+&nbsp;     **/
+&nbsp;    public String getFilePath() {
+<b class="nc">&nbsp;        return filePath;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the file path of the image.
+&nbsp;     * @param filePath The file path to set.
+&nbsp;     **/
+&nbsp;    public void setFilePath(String filePath) {
+<b class="nc">&nbsp;        this.filePath = filePath;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the associated Chat.
+&nbsp;     * @return The associated Chat.
+&nbsp;     **/
+&nbsp;    public Chat getChat() {
+<b class="nc">&nbsp;        return chat;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the associated Chat.
+&nbsp;     * @param chat The Chat to set.
+&nbsp;     **/
+&nbsp;    public void setChat(Chat chat) {
+<b class="nc">&nbsp;        this.chat = chat;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if the image file exists at the specified file path.
+&nbsp;     * @return True if the file exists, false otherwise.
+&nbsp;     **/
+&nbsp;    public boolean isFileExists() {
+<b class="nc">&nbsp;        if (filePath == null || filePath.isEmpty()) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        File file = new File(filePath);</b>
+<b class="nc">&nbsp;        return file.exists();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 23:25</div>
+</div>
+</body>
+</html>

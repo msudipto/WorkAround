@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".loginActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF0E0">
+
+    <!--White background to surround
+        username,password and sign in button-->
+    <FrameLayout
+        android:layout_width="350dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="250dp"
+        android:background="@color/white">
+    </FrameLayout>
+
+    <!--Logo-->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-500dp"
+        android:src="@drawable/workaroundlogo">
+    </ImageView>
+
+    <!--username input-->
+    <EditText
+        android:id="@+id/usernameInput"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="Username"
+        android:inputType="text"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp">
+    </EditText>
+
+    <!--password input-->
+    <EditText
+        android:id="@+id/passwordInput"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp">
+    </EditText>
+
+    <!--Sign In button-->
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        android:text="Sign In"
+        android:backgroundTint="#FFA500">
+    </Button>
+
+    <!--Forgot password-->
+    <Button
+        android:id="@+id/forgotButton"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="57dp"
+        android:layout_marginTop="-100dp"
+        android:text="Forgot Password?"
+        android:textSize="5pt"
+        android:textAlignment="center"
+        android:backgroundTint="@color/white"
+        android:textColor="#4169E1">
+    </Button>
+
+    <!--New to WorkAround-->
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="120dp"
+        android:text="New to workAround?"
+        android:textAlignment="center">
+    </TextView>
+
+    <!--Join now-->
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="170dp"
+        android:layout_marginTop="-50dp"
+        android:text="Join now"
+        android:textAlignment="center"
+        android:textColor="#4169E1">
+    </TextView>
+
+    <!--Show Password-->
+    <ImageButton
+        android:id="@+id/showPassword"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/eyehide"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="306dp"
+        android:layout_marginTop="-250dp"
+        android:background="@android:color/transparent">
+    </ImageButton>
+
+    <!-- Message display -->
+    <TextView
+        android:id="@+id/mainMessage"
+        android:layout_width="350dp"
+        android:layout_height="25dp"
+        android:text=""
+        android:textSize="18dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="140dp"
+        android:textColor="#FF0000"
+        android:textAlignment="center">
+    </TextView>
+
+    <Button
+        android:id="@+id/newUserJoin"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent">
+
+    </Button>
+
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

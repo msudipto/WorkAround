@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#FFF0E0"
+    tools:context=".createTasksActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBarCreate"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFA500"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextColor="#FFFFFF"
+        tools:ignore="MissingConstraints">
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Project Name Field -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Name:"
+        android:padding="16dp">
+    </TextView>
+
+    <EditText
+        android:id="@+id/taskName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter task name"
+        android:padding="16dp">
+    </EditText>
+
+    <!-- Project Description Field -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Description:"
+        android:padding="16dp">
+    </TextView>
+
+    <EditText
+        android:id="@+id/taskDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter task description"
+        android:padding="16dp">
+    </EditText>
+
+    <!-- Due Date Field -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Due Date:"
+        android:padding="16dp">
+    </TextView>
+
+    <EditText
+        android:id="@+id/dueDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter due date (e.g., MM/DD/YYYY)"
+        android:padding="16dp">
+    </EditText>
+
+    <!-- Priority Level Dropdown -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Priority Level:"
+        android:padding="16dp">
+    </TextView>
+
+    <Spinner
+        android:id="@+id/priorityLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+    </Spinner>
+
+    <!-- Employer Assigned Field -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Employee Assigned To:"
+        android:padding="16dp">
+    </TextView>
+
+    <EditText
+        android:id="@+id/employeeAssigned"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter employee's name"
+        android:padding="16dp">
+    </EditText>
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_gravity="center"
+        android:padding="16dp"
+        android:backgroundTint="#FFA500">
+    </Button>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

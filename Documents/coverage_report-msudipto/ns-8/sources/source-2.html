@@ -1,0 +1,163 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ChatSocketConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.websocket</a>
+</div>
+
+<h1>Coverage Summary for Class: ChatSocketConfig (coms309.websocket)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChatSocketConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ChatSocketConfig$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">ChatSocketConfig$$SpringCGLIB$$1</td>
+  </tr>
+  <tr>
+    <td class="name">ChatSocketConfig$$SpringCGLIB$$2</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.websocket;
+&nbsp;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+&nbsp;import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+&nbsp;import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+&nbsp;import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+&nbsp;import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+&nbsp;import org.springframework.web.socket.server.standard.SpringConfigurator;
+&nbsp;
+&nbsp;@Configuration
+&nbsp;@EnableWebSocketMessageBroker
+<b class="fc">&nbsp;public class ChatSocketConfig implements WebSocketMessageBrokerConfigurer {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers the ServerEndpointExporter bean, which is required for WebSocket
+&nbsp;     * endpoint configuration. This bean is only needed when running in an
+&nbsp;     * embedded server (e.g., Spring Boot).
+&nbsp;     *
+&nbsp;     * @return ServerEndpointExporter instance if running in an embedded server,
+&nbsp;     *         null otherwise.
+&nbsp;     **/
+&nbsp;    @Bean
+&nbsp;    public ServerEndpointExporter serverEndpointExporter() {
+<b class="fc">&nbsp;        return new ServerEndpointExporter();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void configureMessageBroker(MessageBrokerRegistry config) {
+&nbsp;        // Configure a simple in-memory message broker
+<b class="fc">&nbsp;        config.enableSimpleBroker(&quot;/topic&quot;, &quot;/queue&quot;);</b>
+<b class="fc">&nbsp;        config.setApplicationDestinationPrefixes(&quot;/app&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void registerStompEndpoints(StompEndpointRegistry registry) {
+&nbsp;        // Register a WebSocket endpoint for STOMP connections
+<b class="fc">&nbsp;        registry.addEndpoint(&quot;/chat&quot;).setAllowedOrigins(&quot;*&quot;).withSockJS();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 23:25</div>
+</div>
+</body>
+</html>
